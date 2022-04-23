@@ -9,8 +9,9 @@ class Panel(Part):
         width: float,
         thickness: float,
         material: Optional[str] = None,
+        name: Optional[str] = None,
     ):
-        super().__init__()
+        super().__init__(name=name)
         self.length = length
         self.width = width
         self.thickness = thickness

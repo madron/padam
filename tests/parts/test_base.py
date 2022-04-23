@@ -47,3 +47,8 @@ class PartTest(unittest.TestCase):
         self.assertEqual(cabinet.materials[2].name, 'drawer_screw')
         self.assertEqual(cabinet.materials[3].name, 'drawer_panel')
         self.assertEqual(len(cabinet.materials), 4)
+
+    def test_get_object(self):
+        part = Part()
+        with self.assertRaises(NotImplementedError):
+            part.get_object()
