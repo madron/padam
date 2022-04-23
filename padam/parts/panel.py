@@ -1,4 +1,5 @@
 from typing import Optional
+from padam.freecad import document
 from padam.parts import Part
 
 
@@ -17,6 +18,11 @@ class Panel(Part):
         self.thickness = thickness
         self.material = material
 
-    def get_object(self):
-        import cadquery as cq
-        return cq.Workplane().box(self.length, self.width, self.thickness)
+    def get_object(self, document=document):
+        obj = document.addObject("Part::Box","Box")
+        obj.Length = self.length
+        obj.Width = self.width
+        obj.Height = self.thickness
+        if self.name:
+            obj.Label = self.name
+        return obj

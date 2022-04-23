@@ -7,7 +7,8 @@ from types import ModuleType
 
 
 FREECAD_MODULES = [
-    'FreeCAD'
+    'FreeCAD',
+    'Part',
 ]
 
 
@@ -35,10 +36,13 @@ try:
     for module in FREECAD_MODULES:
         globals()[module] = import_module(module)
     freecad_missing = False
+    document = globals()['FreeCAD'].ActiveDocument or globals()['FreeCAD'].newDocument()
 except:
+    raise
     freecad_missing = True
     for module in FREECAD_MODULES:
         globals()[module] = ModuleType('FreeCADFake')
+    document = None
 
 
 if __name__ == '__main__':

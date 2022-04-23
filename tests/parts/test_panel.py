@@ -1,10 +1,6 @@
 import unittest
 from padam.parts.panel import Panel
-try:
-    import cadquery as cq
-    cadquery_missing = False
-except:  # pragma: no cover
-    cadquery_missing = 'cadquery module not available'
+from padam.freecad import freecad_missing
 
 
 class PanelTest(unittest.TestCase):
@@ -20,7 +16,10 @@ class PanelTest(unittest.TestCase):
         panel = Panel(1000, 30, 18)
         self.assertEqual(panel.materials, [panel])
 
-    @unittest.skipIf(cadquery_missing, cadquery_missing)
+    @unittest.skipIf(freecad_missing, '')
     def test_get_object(self):
-        obj = Panel(1000, 30, 18).get_object()
-        self.assertIsInstance(obj, cq.Workplane)
+        obj = Panel(1000, 200, 18, name='panel').get_object()
+        self.assertEqual(obj.Length.toStr(), '1000.00 mm')
+        self.assertEqual(obj.Width.toStr(), '200.00 mm')
+        self.assertEqual(obj.Height.toStr(), '18.00 mm')
+        self.assertEqual(obj.Label, 'panel')
