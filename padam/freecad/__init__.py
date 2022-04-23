@@ -3,16 +3,9 @@ import subprocess
 import sys
 from importlib import import_module
 from pathlib import Path
-from types import ModuleType
 
 
-FREECAD_MODULES = [
-    'FreeCAD',
-    'Part',
-]
-
-
-def _add_freecad_to_sys_path():
+def _update_sys_path():
     for path in _get_freecad_paths():
         sys.path.append(path)
 
@@ -31,18 +24,9 @@ def _get_freecad_paths():
     return paths
 
 
-try:
-    _add_freecad_to_sys_path()
-    for module in FREECAD_MODULES:
-        globals()[module] = import_module(module)
-    freecad_missing = False
-    document = globals()['FreeCAD'].ActiveDocument or globals()['FreeCAD'].newDocument()
-except:
-    raise
-    freecad_missing = True
-    for module in FREECAD_MODULES:
-        globals()[module] = ModuleType('FreeCADFake')
-    document = None
+_update_sys_path()
+FreeCAD = import_module('FreeCAD')
+document = FreeCAD.newDocument()
 
 
 if __name__ == '__main__':

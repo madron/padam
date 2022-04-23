@@ -1,6 +1,5 @@
 import unittest
 from padam.parts.panel import Panel
-from padam.freecad import freecad_missing
 
 
 class PanelTest(unittest.TestCase):
@@ -16,7 +15,6 @@ class PanelTest(unittest.TestCase):
         panel = Panel(1000, 30, 18)
         self.assertEqual(panel.materials, [panel])
 
-    @unittest.skipIf(freecad_missing, '')
     def test_get_object(self):
         obj = Panel(1000, 200, 18, name='panel').get_object()
         self.assertEqual(obj.Length.toStr(), '1000.00 mm')
