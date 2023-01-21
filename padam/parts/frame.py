@@ -5,7 +5,7 @@ from solid import OpenSCADObject, rotate
 from solid.utils import right, up, back
 
 
-class Cabinet(Part):
+class Frame(Part):
     def __init__(
         self,
         length: Optional[int] = 1200,
