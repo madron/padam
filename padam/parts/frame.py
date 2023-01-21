@@ -32,6 +32,7 @@ class Frame(Part):
         self.top_back_depth = top_back_depth
         # calculated attributes
         self.interior_length: float = self.length - 2 * self.side_thickness
+        self.interior_height: float = self.height - self.top_thickness - self.bottom_thickness
         # parts
         self.top_panel = self.add_part(Panel(self.interior_length, self.depth, self.top_thickness, name='top_panel'))
         self.bottom_panel = self.add_part(Panel(self.interior_length, self.depth, self.bottom_thickness, name='bottom_panel'))
