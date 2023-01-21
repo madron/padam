@@ -1,6 +1,8 @@
 from __future__ import annotations
+from itertools import zip_longest
 from typing import List, Optional
 from solid import OpenSCADObject
+from solid.utils import g_bom_headers
 
 
 class Part:
@@ -34,3 +36,14 @@ class Part:
 
     def get_objects(self) -> List[OpenSCADObject]:
         return [self.get_object()]
+
+    def bom_part(self, obj: OpenSCADObject, description: str='', per_unit_price:float=None, currency: str='US$', *args, **kwargs) -> OpenSCADObject:
+        name = description if description else obj.__name__
+
+        elements = {'name': name, 'Count':0, 'currency':currency, 'Unit Price':per_unit_price}
+        # This update also adds empty key value pairs to prevent key exceptions.
+        elements.update(dict(zip_longest(g_bom_headers, args, fillvalue='')))
+        elements.update(kwargs)
+
+        obj.add_trait('BOM', elements)
+        return obj

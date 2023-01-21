@@ -3,7 +3,6 @@ from solid import (
     cube,
     OpenSCADObject,
 )
-from solid.utils import bom_part
 from padam.parts import Part
 
 
@@ -23,4 +22,5 @@ class Panel(Part):
         self.material = material
 
     def get_object(self) -> OpenSCADObject:
-        return cube([self.length, self.width, self.thickness])
+        obj = cube([self.length, self.width, self.thickness])
+        return self.bom_part(obj, 'panel', length=self.length, width=self.width, thickness=self.thickness)

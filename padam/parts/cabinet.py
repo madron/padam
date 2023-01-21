@@ -39,7 +39,8 @@ class Cabinet(Part):
         self.right_panel = self.add_part(Panel(self.height, self.depth, self.side_thickness, name='right_panel'))
 
     def get_objects(self) -> List[OpenSCADObject]:
+        top_panel = up(self.height - self.top_thickness)(self.top_panel.get_object())
         bottom_panel = self.bottom_panel.get_object()
         left_panel = self.left_panel.get_object()
-        top_panel = up(self.height - self.top_thickness)(self.top_panel.get_object())
-        return [bottom_panel, top_panel]
+        right_panel = self.right_panel.get_object()
+        return [top_panel, bottom_panel, left_panel, right_panel]
