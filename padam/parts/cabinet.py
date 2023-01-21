@@ -1,8 +1,8 @@
 from typing import List, Optional
 from padam.parts import Part
 from padam.parts.panel import Panel
-from solid import OpenSCADObject
-from solid.utils import up
+from solid import OpenSCADObject, rotate
+from solid.utils import right, up, back
 
 
 class Cabinet(Part):
@@ -41,6 +41,9 @@ class Cabinet(Part):
     def get_objects(self) -> List[OpenSCADObject]:
         top_panel = up(self.height - self.top_thickness)(self.top_panel.get_object())
         bottom_panel = self.bottom_panel.get_object()
-        left_panel = self.left_panel.get_object()
-        right_panel = self.right_panel.get_object()
-        return [top_panel, bottom_panel, left_panel, right_panel]
+        left_panel = rotate([0, -90, 0])(self.left_panel.get_object())
+        right_panel = right(self.length - self.side_thickness)(rotate([0, -90, 0])(self.right_panel.get_object()))
+        panels = [top_panel, bottom_panel, left_panel, right_panel]
+        panels = [right(self.side_thickness)(p) for p in panels]
+        panels = [back(self.depth)(p) for p in panels]
+        return panels
