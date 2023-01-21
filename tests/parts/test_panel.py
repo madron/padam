@@ -1,4 +1,5 @@
 import unittest
+from solid import cube
 from padam.parts.panel import Panel
 
 
@@ -17,7 +18,5 @@ class PanelTest(unittest.TestCase):
 
     def test_get_object(self):
         obj = Panel(1000, 200, 18, name='panel').get_object()
-        self.assertEqual(obj.Length.toStr(), '1000.00 mm')
-        self.assertEqual(obj.Width.toStr(), '200.00 mm')
-        self.assertEqual(obj.Height.toStr(), '18.00 mm')
-        self.assertEqual(obj.Label, 'panel')
+        self.assertIsInstance(obj, cube)
+        self.assertEqual(obj.params['size'], [1000, 200, 18])

@@ -1,6 +1,8 @@
-from typing import Optional
+from typing import List, Optional
 from padam.parts import Part
 from padam.parts.panel import Panel
+from solid import OpenSCADObject
+from solid.utils import up
 
 
 class Cabinet(Part):
@@ -36,28 +38,8 @@ class Cabinet(Part):
         self.left_panel = self.add_part(Panel(self.height, self.depth, self.side_thickness, name='left_panel'))
         self.right_panel = self.add_part(Panel(self.height, self.depth, self.side_thickness, name='right_panel'))
 
-    def get_object(self):
-        import cadquery as cq
-        a = cq.Assembly()
-        # bottom
-        a.add(
-            self.bottom_panel,
-            name=str(self.bottom_panel),
-            loc=cq.Location(cq.Vector(self.interior_length / 2 + self.side_thickness, self.depth / 2, self.bottom_thickness / 2)),
-            color=cq.Color('burlywood'),
-        )
-        # # left
-        # a.add(
-        #     self.left_panel,
-        #     name=str(self.left_panel),
-        #     loc=cq.Location(cq.Vector(self.side_thickness / 2, self.depth / 2, self.height / 2)),
-        #     color=cq.Color('burlywood'),
-        # )
-        # right
-        # a.add(
-        #     self.right_panel,
-        #     name=str(self.right_panel),
-        #     loc=cq.Location(cq.Vector(- self.side_thickness / 2 + self.length, self.depth / 2, self.height / 2)),
-        #     color=cq.Color('burlywood'),
-        # )
-        return a
+    def get_objects(self) -> List[OpenSCADObject]:
+        bottom_panel = self.bottom_panel.get_object()
+        left_panel = self.left_panel.get_object()
+        top_panel = up(self.height - self.top_thickness)(self.top_panel.get_object())
+        return [bottom_panel, top_panel]

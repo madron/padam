@@ -1,5 +1,9 @@
-from typing import Optional
-from padam.freecad import document
+from typing import List, Optional
+from solid import (
+    cube,
+    OpenSCADObject,
+)
+from solid.utils import bom_part
 from padam.parts import Part
 
 
@@ -18,11 +22,5 @@ class Panel(Part):
         self.thickness = thickness
         self.material = material
 
-    def get_object(self, document=document):
-        obj = document.addObject("Part::Box","Box")
-        obj.Length = self.length
-        obj.Width = self.width
-        obj.Height = self.thickness
-        if self.name:
-            obj.Label = self.name
-        return obj
+    def get_object(self) -> OpenSCADObject:
+        return cube([self.length, self.width, self.thickness])

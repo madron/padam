@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import Optional
+from typing import List, Optional
+from solid import OpenSCADObject
 
 
 class Part:
@@ -28,5 +29,8 @@ class Part:
         else:
             return [self]
 
-    def get_object(self):
+    def get_object(self) -> OpenSCADObject:
         raise NotImplementedError()
+
+    def get_objects(self) -> List[OpenSCADObject]:
+        return [self.get_object()]
