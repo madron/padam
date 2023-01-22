@@ -33,10 +33,7 @@ if not args.quiet:
     sys.stdout.write('----------\n')
     params = project.part.get_params()
     for param in params:
-        if isinstance(param[1], str):
-            line = '{}: {}\n'.format(*param)
-        else:
-            line = '{:20}: {}\n'.format(*param)
+        line = '{:20}: {}\n'.format(*param)
         sys.stdout.write(line)
     if params:
         sys.stdout.write('\n')

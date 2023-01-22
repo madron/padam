@@ -52,26 +52,26 @@ class Cabinet(Frame):
         # parts
         self.back_panel = self.add_part(Panel(self.interior_length, self.interior_height, self.back_thickness, name='back_panel', material=self.back_material))
         if self.door_number == 1:
-            self.door_panel = self.add_part(Panel(self.length - self.door_offset, self.height - self.door_offset, self.door_thickness, name='door_panel', material=self.door_material))
+            self.door_panel = self.add_part(Panel(self.height - self.door_offset, self.length - self.door_offset, self.door_thickness, name='door_panel', material=self.door_material))
         if self.door_number == 2:
-            self.left_door_panel = self.add_part(Panel(self.length / 2 - self.door_offset, self.height - self.door_offset, self.door_thickness, name='left_door_panel', material=self.door_material))
-            self.right_door_panel = self.add_part(Panel(self.length / 2 - self.door_offset, self.height - self.door_offset, self.door_thickness, name='right_door_panel', material=self.door_material))
+            self.left_door_panel = self.add_part(Panel(self.height - self.door_offset, self.length / 2 - self.door_offset, self.door_thickness, name='left_door_panel', material=self.door_material))
+            self.right_door_panel = self.add_part(Panel(self.height - self.door_offset, self.length / 2 - self.door_offset, self.door_thickness, name='right_door_panel', material=self.door_material))
 
     def get_objects(self) -> List[OpenSCADObject]:
         back_panel = right(self.side_thickness)(up(self.bottom_thickness)(rotate([90, 0, 0])(self.back_panel.get_object())))
         doors = []
         if self.door_number == 1:
-            door = rotate([90, 0, 0])(self.door_panel.get_object())
+            door = rotate([270, 270, 0])(self.door_panel.get_object())
             door = right(self.door_offset / 2)(door)
             doors.append(door)
         if self.door_number == 2:
-            door = rotate([90, 0, 0])(self.left_door_panel.get_object())
+            door = rotate([270, 270, 0])(self.left_door_panel.get_object())
             door = right(self.door_offset / 2)(door)
             doors.append(door)
-            door = rotate([90, 0, 0])(self.right_door_panel.get_object())
+            door = rotate([270, 270, 0])(self.right_door_panel.get_object())
             door = right(self.length / 2 + self.door_offset / 2)(door)
             doors.append(door)
-        doors = [back(self.depth + 1)(door) for door in doors]
+        doors = [back(self.depth + self.door_thickness + 1)(door) for door in doors]
         doors = [up(self.door_offset / 2)(door) for door in doors]
         return super().get_objects() + [back_panel] + doors
 
