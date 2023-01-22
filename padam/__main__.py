@@ -3,6 +3,10 @@ import sys
 from importlib import import_module
 from pathlib import Path
 from solid import scad_render
+from padam.utils import get_cutlist
+
+
+CUTLIST_FORMATS = ['cutlistoptimizer']
 
 
 def get_projects():
@@ -17,6 +21,8 @@ parser = argparse.ArgumentParser(
 parser.add_argument('project', type=str, choices=get_projects())
 parser.add_argument('-o', '--output', type=argparse.FileType('w'))
 parser.add_argument('-q', '--quiet', action='store_true')
+parser.add_argument('--cutlist', type=argparse.FileType('w'))
+parser.add_argument('--cutlist-format', type=str, choices=CUTLIST_FORMATS, default=CUTLIST_FORMATS[0])
 args = parser.parse_args()
 
 
@@ -39,3 +45,8 @@ if args.output:
     rendered = ''.join([scad_render(obj) for obj in project.part.get_objects()])
     args.output.write(rendered)
     args.output.close()
+
+
+if args.cutlist:
+    args.cutlist.write(get_cutlist(project.part))
+    args.cutlist.close()

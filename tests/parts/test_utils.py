@@ -53,3 +53,16 @@ class PanelListTest(unittest.TestCase):
         self.assertEqual(panel['material'], '20')
         self.assertEqual(panel['length'], 700)
         self.assertEqual(panel['width'], 600)
+
+
+class CutListTest(unittest.TestCase):
+    def test_material(self):
+        frame = Frame(name='kitchen', length=1200, height=700, depth=600, thickness=20, material='plywood')
+        cut_list = utils.get_cutlist(frame)
+        lines = cut_list.splitlines()
+        self.assertEqual(lines[0], 'Length,Width,Qty,Material,Label,Enabled,Grain direction')
+        self.assertEqual(lines[1], '1160,600,1,plywood_20,top_panel,true,v')
+        self.assertEqual(lines[2], '1160,600,1,plywood_20,bottom_panel,true,v')
+        self.assertEqual(lines[3], '700,600,1,plywood_20,left_panel,true,v')
+        self.assertEqual(lines[4], '700,600,1,plywood_20,right_panel,true,v')
+        self.assertEqual(len(lines), 5)
