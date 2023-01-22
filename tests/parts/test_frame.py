@@ -24,5 +24,16 @@ class FrameTest(unittest.TestCase):
         self.assertEqual(frame.materials[3].name, 'right_panel')
 
     def test_get_objects(self):
-        objs = Frame(name='kitchen', length=1200, depth=600, thickness=20).get_objects()
+        objs = Frame(name='kitchen', length=1200, height=700, depth=600, thickness=20).get_objects()
         self.assertEqual(len(objs), 4)
+
+    def test_get_params(self):
+        params = Frame(length=1200, height=700, depth=600, thickness=20).get_params()
+        self.assertEqual(len(params), 7)
+        self.assertEqual(params[0], ('name', ''))
+        self.assertEqual(params[1], ('length', 1200))
+        self.assertEqual(params[2], ('height', 700))
+        self.assertEqual(params[3], ('depth', 600))
+        self.assertEqual(params[4], ('top_thickness', 20))
+        self.assertEqual(params[5], ('bottom_thickness', 20))
+        self.assertEqual(params[6], ('side_thickness', 20))

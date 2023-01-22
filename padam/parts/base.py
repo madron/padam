@@ -37,6 +37,9 @@ class Part:
     def get_objects(self) -> List[OpenSCADObject]:
         return [self.get_object()]
 
+    def get_params(self) -> List[tuple]:
+        return [('name', self.name or '')]
+
     def bom_part(self, obj: OpenSCADObject, description: str='', per_unit_price:float=None, currency: str='US$', *args, **kwargs) -> OpenSCADObject:
         name = description if description else obj.__name__
 

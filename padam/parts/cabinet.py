@@ -62,3 +62,11 @@ class Cabinet(Frame):
         doors = [back(self.depth + 1)(door) for door in doors]
         doors = [up(self.door_offset / 2)(door) for door in doors]
         return super().get_objects() + [back_panel] + doors
+
+    def get_params(self) -> List[tuple]:
+        return super().get_params() + [
+            ('back_thickness', self.back_thickness),
+            ('door_number', self.door_number),
+            ('door_thickness', self.door_thickness),
+            ('door_offset', self.door_offset),
+        ]

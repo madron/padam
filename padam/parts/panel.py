@@ -24,3 +24,11 @@ class Panel(Part):
     def get_object(self) -> OpenSCADObject:
         obj = cube([self.length, self.width, self.thickness])
         return self.bom_part(obj, 'panel', length=self.length, width=self.width, thickness=self.thickness)
+
+    def get_params(self) -> List[tuple]:
+        return super().get_params() + [
+            ('material', self.material or ''),
+            ('length', self.length),
+            ('width', self.width),
+            ('thickness', self.thickness),
+        ]

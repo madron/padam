@@ -28,3 +28,13 @@ class PanelTest(unittest.TestCase):
     def test_get_objects(self):
         objs = Panel(1000, 200, 18, name='panel').get_objects()
         self.assertEqual(len(objs), 1)
+
+    def test_get_params(self):
+        panel = Panel(1000, 150, 25, name='bottom', material='plywood')
+        params = panel.get_params()
+        self.assertEqual(len(params), 5)
+        self.assertEqual(params[0], ('name', 'bottom'))
+        self.assertEqual(params[1], ('material', 'plywood'))
+        self.assertEqual(params[2], ('length', 1000))
+        self.assertEqual(params[3], ('width', 150))
+        self.assertEqual(params[4], ('thickness', 25))

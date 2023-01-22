@@ -48,3 +48,13 @@ class Frame(Part):
         panels = [right(self.side_thickness)(p) for p in panels]
         panels = [back(self.depth)(p) for p in panels]
         return panels
+
+    def get_params(self) -> List[tuple]:
+        return super().get_params() + [
+            ('length', self.length),
+            ('height', self.height),
+            ('depth', self.depth),
+            ('top_thickness', self.top_thickness),
+            ('bottom_thickness', self.bottom_thickness),
+            ('side_thickness', self.side_thickness),
+        ]
