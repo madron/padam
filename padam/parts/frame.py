@@ -12,9 +12,13 @@ class Frame(Part):
         height: Optional[int] = 700,
         depth: Optional[int] = 600,
         thickness: Optional[float] = 18,
+        material: Optional[str] = None,
         top_thickness: Optional[float] = None,
         bottom_thickness: Optional[float] = None,
         side_thickness: Optional[float] = None,
+        top_material: Optional[str] = None,
+        bottom_material: Optional[str] = None,
+        side_material: Optional[str] = None,
         top_slitted: Optional[bool] = True,
         top_front_depth: Optional[int] = 100,
         top_back_depth: Optional[int] = 100,
@@ -27,6 +31,9 @@ class Frame(Part):
         self.top_thickness = top_thickness or thickness
         self.bottom_thickness = bottom_thickness or thickness
         self.side_thickness = side_thickness or thickness
+        self.top_material = top_material or material
+        self.bottom_material = bottom_material or material
+        self.side_material = side_material or material
         self.top_slitted = top_slitted
         self.top_front_depth = top_front_depth
         self.top_back_depth = top_back_depth
@@ -34,10 +41,10 @@ class Frame(Part):
         self.interior_length: float = self.length - 2 * self.side_thickness
         self.interior_height: float = self.height - self.top_thickness - self.bottom_thickness
         # parts
-        self.top_panel = self.add_part(Panel(self.interior_length, self.depth, self.top_thickness, name='top_panel'))
-        self.bottom_panel = self.add_part(Panel(self.interior_length, self.depth, self.bottom_thickness, name='bottom_panel'))
-        self.left_panel = self.add_part(Panel(self.height, self.depth, self.side_thickness, name='left_panel'))
-        self.right_panel = self.add_part(Panel(self.height, self.depth, self.side_thickness, name='right_panel'))
+        self.top_panel = self.add_part(Panel(self.interior_length, self.depth, self.top_thickness, name='top_panel', material=self.top_material))
+        self.bottom_panel = self.add_part(Panel(self.interior_length, self.depth, self.bottom_thickness, name='bottom_panel', material=self.bottom_material))
+        self.left_panel = self.add_part(Panel(self.height, self.depth, self.side_thickness, name='left_panel', material=self.side_material))
+        self.right_panel = self.add_part(Panel(self.height, self.depth, self.side_thickness, name='right_panel', material=self.side_material))
 
     def get_objects(self) -> List[OpenSCADObject]:
         top_panel = up(self.height - self.top_thickness)(self.top_panel.get_object())
@@ -57,4 +64,7 @@ class Frame(Part):
             ('top_thickness', self.top_thickness),
             ('bottom_thickness', self.bottom_thickness),
             ('side_thickness', self.side_thickness),
+            ('top_material', self.top_material),
+            ('bottom_material', self.bottom_material),
+            ('side_material', self.side_material),
         ]
