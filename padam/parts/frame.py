@@ -2,7 +2,7 @@ from typing import List, Optional
 from padam.parts import Part
 from padam.parts.panel import Panel
 from solid import OpenSCADObject, rotate
-from solid.utils import right, up, back
+from solid.utils import back, right, up
 
 
 class Frame(Part):

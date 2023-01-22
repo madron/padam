@@ -24,3 +24,7 @@ class PanelTest(unittest.TestCase):
         self.assertEqual(obj.traits['BOM']['length'], 1000)
         self.assertEqual(obj.traits['BOM']['width'], 200)
         self.assertEqual(obj.traits['BOM']['thickness'], 18)
+
+    def test_get_objects(self):
+        objs = Panel(1000, 200, 18, name='panel').get_objects()
+        self.assertEqual(len(objs), 1)
