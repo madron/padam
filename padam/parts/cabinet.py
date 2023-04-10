@@ -21,10 +21,10 @@ class Cabinet(Frame):
         side_material: Optional[str] = None,
         back_thickness: Optional[float] = None,
         back_material: Optional[str] = None,
+        reveal: Optional[float] = 2,
         door_number: Optional[int] = 0,
         door_thickness: Optional[float] = None,
         door_material: Optional[str] = None,
-        door_offset: Optional[float] = 3,
         name: Optional[str] = None,
     ):
         super().__init__(
@@ -46,41 +46,43 @@ class Cabinet(Frame):
         self.door_thickness = door_thickness or thickness
         self.door_material = door_material or material
         self.door_number = door_number
-        self.door_offset = door_offset
+        self.reveal = reveal
         # calculated attributes
+        door_offset = self.reveal * 2
         self.interior_depth: float = self.depth - self.back_thickness
         # parts
         self.back_panel = self.add_part(Panel(self.interior_length, self.interior_height, self.back_thickness, name='back_panel', material=self.back_material))
         if self.door_number == 1:
-            self.door_panel = self.add_part(Panel(self.height - self.door_offset, self.length - self.door_offset, self.door_thickness, name='door_panel', material=self.door_material))
+            self.door_panel = self.add_part(Panel(self.height - door_offset, self.length - door_offset, self.door_thickness, name='door_panel', material=self.door_material))
         if self.door_number == 2:
-            self.left_door_panel = self.add_part(Panel(self.height - self.door_offset, self.length / 2 - self.door_offset, self.door_thickness, name='left_door_panel', material=self.door_material))
-            self.right_door_panel = self.add_part(Panel(self.height - self.door_offset, self.length / 2 - self.door_offset, self.door_thickness, name='right_door_panel', material=self.door_material))
+            self.left_door_panel = self.add_part(Panel(self.height - door_offset, self.length / 2 - door_offset, self.door_thickness, name='left_door_panel', material=self.door_material))
+            self.right_door_panel = self.add_part(Panel(self.height - door_offset, self.length / 2 - door_offset, self.door_thickness, name='right_door_panel', material=self.door_material))
 
     def get_objects(self) -> List[OpenSCADObject]:
+        door_offset = self.reveal * 2
         back_panel = right(self.side_thickness)(up(self.bottom_thickness)(rotate([90, 0, 0])(self.back_panel.get_object())))
         doors = []
         if self.door_number == 1:
             door = rotate([270, 270, 0])(self.door_panel.get_object())
-            door = right(self.door_offset / 2)(door)
+            door = right(door_offset / 2)(door)
             doors.append(door)
         if self.door_number == 2:
             door = rotate([270, 270, 0])(self.left_door_panel.get_object())
-            door = right(self.door_offset / 2)(door)
+            door = right(door_offset / 2)(door)
             doors.append(door)
             door = rotate([270, 270, 0])(self.right_door_panel.get_object())
-            door = right(self.length / 2 + self.door_offset / 2)(door)
+            door = right(self.length / 2 + door_offset / 2)(door)
             doors.append(door)
         doors = [back(self.depth + self.door_thickness + 1)(door) for door in doors]
-        doors = [up(self.door_offset / 2)(door) for door in doors]
+        doors = [up(door_offset / 2)(door) for door in doors]
         return super().get_objects() + [back_panel] + doors
 
     def get_params(self) -> List[tuple]:
         return super().get_params() + [
             ('back_thickness', self.back_thickness),
             ('back_material', self.back_material),
+            ('reveal', self.reveal),
             ('door_number', self.door_number),
             ('door_thickness', self.door_thickness),
             ('door_material', self.door_material),
-            ('door_offset', self.door_offset),
         ]
