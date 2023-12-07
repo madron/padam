@@ -1,9 +1,10 @@
-import collections
 from typing import Any, List, Optional, OrderedDict
 from solid import (
+    color,
     cube,
     OpenSCADObject,
 )
+from padam import constants
 from padam.parts import Part
 
 
@@ -24,6 +25,9 @@ class Panel(Part):
 
     def get_object(self) -> OpenSCADObject:
         obj = cube([self.length, self.width, self.thickness])
+        material_color = constants.MATERIAL_COLOR.get(self.material, None)
+        if material_color:
+            obj = color(material_color)(obj)
         return self.bom_part(obj, 'panel', length=self.length, width=self.width, thickness=self.thickness)
 
     def get_params(self) -> OrderedDict[str, Any]:
