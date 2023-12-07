@@ -1,4 +1,5 @@
-from typing import List, Optional
+import collections
+from typing import Any, List, Optional, OrderedDict
 from solid import (
     cube,
     OpenSCADObject,
@@ -25,10 +26,10 @@ class Panel(Part):
         obj = cube([self.length, self.width, self.thickness])
         return self.bom_part(obj, 'panel', length=self.length, width=self.width, thickness=self.thickness)
 
-    def get_params(self) -> List[tuple]:
-        return super().get_params() + [
-            ('material', self.material or ''),
-            ('length', self.length),
-            ('width', self.width),
-            ('thickness', self.thickness),
-        ]
+    def get_params(self) -> OrderedDict[str, Any]:
+        params = super().get_params()
+        params['material'] = self.material or ''
+        params['length'] = self.length
+        params['width'] = self.width
+        params['thickness'] = self.thickness
+        return params

@@ -7,6 +7,6 @@ part = Cabinet(
     height=700,
     depth=600,
     thickness=18,
-    material='plywood_poplar',
+    material='plywood',
     door_number=2,
 )

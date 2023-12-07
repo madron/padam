@@ -32,8 +32,8 @@ if not args.quiet:
     sys.stdout.write('Parameters\n')
     sys.stdout.write('----------\n')
     params = project.part.get_params()
-    for param in params:
-        line = '{:20}: {}\n'.format(*param)
+    for key, value in params.items():
+        line = '{:20}: {}\n'.format(key, value)
         sys.stdout.write(line)
     if params:
         sys.stdout.write('\n')

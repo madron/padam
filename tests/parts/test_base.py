@@ -1,3 +1,4 @@
+import collections
 import unittest
 from padam.parts import Part
 
@@ -54,5 +55,5 @@ class PartTest(unittest.TestCase):
             part.get_object()
 
     def test_get_params(self):
-        self.assertEqual(Part().get_params(), [('name', '')])
-        self.assertEqual(Part(name='drawer').get_params(), [('name', 'drawer')])
+        self.assertEqual(Part().get_params(), collections.OrderedDict([('name', '')]))
+        self.assertEqual(Part(name='drawer').get_params(), collections.OrderedDict([('name', 'drawer')]))

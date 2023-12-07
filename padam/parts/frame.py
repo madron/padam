@@ -1,4 +1,5 @@
-from typing import List, Optional
+import collections
+from typing import Any, List, Optional, OrderedDict
 from padam.parts import Part
 from padam.parts.panel import Panel
 from solid import OpenSCADObject, rotate
@@ -56,15 +57,15 @@ class Frame(Part):
         panels = [back(self.depth)(p) for p in panels]
         return panels
 
-    def get_params(self) -> List[tuple]:
-        return super().get_params() + [
-            ('length', self.length),
-            ('height', self.height),
-            ('depth', self.depth),
-            ('top_thickness', self.top_thickness),
-            ('bottom_thickness', self.bottom_thickness),
-            ('side_thickness', self.side_thickness),
-            ('top_material', self.top_material),
-            ('bottom_material', self.bottom_material),
-            ('side_material', self.side_material),
-        ]
+    def get_params(self) -> OrderedDict[str, Any]:
+        params = super().get_params()
+        params['length'] = self.length
+        params['height'] = self.height
+        params['depth'] = self.depth
+        params['top_thickness'] = self.top_thickness
+        params['bottom_thickness'] = self.bottom_thickness
+        params['side_thickness'] = self.side_thickness
+        params['top_material'] = self.top_material
+        params['bottom_material'] = self.bottom_material
+        params['side_material'] = self.side_material
+        return params

@@ -1,6 +1,7 @@
 from __future__ import annotations
+import collections
 from itertools import zip_longest
-from typing import List, Optional
+from typing import Any, List, Optional, OrderedDict
 from solid import OpenSCADObject
 from solid.utils import g_bom_headers
 
@@ -37,8 +38,8 @@ class Part:
     def get_objects(self) -> List[OpenSCADObject]:
         return [self.get_object()]
 
-    def get_params(self) -> List[tuple]:
-        return [('name', self.name or '')]
+    def get_params(self) -> OrderedDict[str, Any]:
+        return collections.OrderedDict([('name', self.name or '')])
 
     def bom_part(self, obj: OpenSCADObject, description: str='', per_unit_price:float=None, currency: str='US$', *args, **kwargs) -> OpenSCADObject:
         name = description if description else obj.__name__
@@ -50,3 +51,11 @@ class Part:
 
         obj.add_trait('BOM', elements)
         return obj
+
+
+class Container(Part):
+    def get_objects(self) -> OpenSCADObject:
+        objects = []
+        for part in  self._parts:
+            objects += part.get_objects()
+        return objects

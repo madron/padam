@@ -1,4 +1,5 @@
-from typing import List, Optional
+import collections
+from typing import Any, List, Optional, OrderedDict
 from padam.parts.panel import Panel
 from padam.parts.frame import Frame
 from solid import OpenSCADObject, rotate
@@ -77,12 +78,16 @@ class Cabinet(Frame):
         doors = [up(door_offset / 2)(door) for door in doors]
         return super().get_objects() + [back_panel] + doors
 
-    def get_params(self) -> List[tuple]:
-        return super().get_params() + [
-            ('back_thickness', self.back_thickness),
-            ('back_material', self.back_material),
-            ('reveal', self.reveal),
-            ('door_number', self.door_number),
-            ('door_thickness', self.door_thickness),
-            ('door_material', self.door_material),
-        ]
+    def get_params(self) -> OrderedDict[str, Any]:
+        params = super().get_params()
+        params['back_thickness'] = self.back_thickness
+        params['back_material'] = self.back_material
+        params['interior_length'] = self.interior_length
+        params['interior_height'] = self.interior_height
+        params['interior_depth'] = self.interior_depth
+        params['door_number'] = self.door_number
+        if self.door_number:
+            params['door_thickness'] = self.door_thickness
+            params['door_material'] = self.door_material
+            params['reveal'] = self.reveal
+        return params
