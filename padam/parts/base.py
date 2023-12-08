@@ -1,9 +1,7 @@
 from __future__ import annotations
 import collections
-from itertools import zip_longest
 from typing import Any, List, Optional, OrderedDict
 from solid import OpenSCADObject
-from solid.utils import g_bom_headers
 
 
 class Part:
@@ -24,13 +22,19 @@ class Part:
 
     @property
     def materials(self):
+        names = []
+        if self.name:
+            names.append(self.name)
         if self.parts:
             materials = []
             for part in self.parts:
-                materials.extend(part.materials)
+                for material in part.materials:
+                    material['names'] = names + material['names']
+                    materials.append(material)
             return materials
         else:
-            return [self]
+            return [dict(names=names, part=self)]
+
 
     def get_object(self) -> OpenSCADObject:
         raise NotImplementedError()
@@ -42,14 +46,6 @@ class Part:
         return collections.OrderedDict([('name', self.name or '')])
 
     def bom_part(self, obj: OpenSCADObject, description: str='', per_unit_price:float=None, currency: str='US$', *args, **kwargs) -> OpenSCADObject:
-        name = description if description else obj.__name__
-
-        elements = {'name': name, 'Count':0, 'currency':currency, 'Unit Price':per_unit_price}
-        # This update also adds empty key value pairs to prevent key exceptions.
-        elements.update(dict(zip_longest(g_bom_headers, args, fillvalue='')))
-        elements.update(kwargs)
-
-        obj.add_trait('BOM', elements)
         return obj
 
 
