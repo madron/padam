@@ -16,8 +16,8 @@ def get_panel_list(part: Part):
             dict(
                 label='_'.join(material['names']),
                 material=material_label,
-                length=panel.panel_length,
-                width=panel.panel_width,
+                length=panel.length,
+                width=panel.width,
             )
         )
     return panels
