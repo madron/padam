@@ -10,7 +10,7 @@ class PartTest(unittest.TestCase):
     def test_no_parts(self):
         part = Part()
         self.assertEqual(part.parts, [])
-        self.assertEqual(part.materials, [part])
+        self.assertEqual(part.materials, [dict(names=[], part=part)])
 
     def test_parts(self):
         panel = Part(name='panel')
@@ -23,8 +23,8 @@ class PartTest(unittest.TestCase):
         self.assertEqual(panel.parts[1].name, 'screw 2')
         self.assertEqual(len(panel.parts), 2)
         # materials
-        self.assertEqual(panel.materials[0].name, 'screw 1')
-        self.assertEqual(panel.materials[1].name, 'screw 2')
+        self.assertEqual(panel.materials[0]['part'].name, 'screw 1')
+        self.assertEqual(panel.materials[1]['part'].name, 'screw 2')
         self.assertEqual(len(panel.materials), 2)
 
     def test_sub_parts(self):
@@ -43,10 +43,10 @@ class PartTest(unittest.TestCase):
         self.assertEqual(cabinet.parts[2].name, 'drawer')
         self.assertEqual(len(cabinet.parts), 3)
         # materials
-        self.assertEqual(cabinet.materials[0].name, 'cabinet_top')
-        self.assertEqual(cabinet.materials[1].name, 'cabinet_bottom')
-        self.assertEqual(cabinet.materials[2].name, 'drawer_screw')
-        self.assertEqual(cabinet.materials[3].name, 'drawer_panel')
+        self.assertEqual(cabinet.materials[0]['part'].name, 'cabinet_top')
+        self.assertEqual(cabinet.materials[1]['part'].name, 'cabinet_bottom')
+        self.assertEqual(cabinet.materials[2]['part'].name, 'drawer_screw')
+        self.assertEqual(cabinet.materials[3]['part'].name, 'drawer_panel')
         self.assertEqual(len(cabinet.materials), 4)
 
     def test_get_object(self):
