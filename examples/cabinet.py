@@ -1,7 +1,7 @@
 from padam.parts.cabinet import Cabinet
 
 
-part = Cabinet(
+Cabinet(
     name='cabinet',
     length=1200,
     height=700,
@@ -9,4 +9,4 @@ part = Cabinet(
     thickness=18,
     material='plywood',
     door_number=2,
-)
+).run()

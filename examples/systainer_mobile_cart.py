@@ -37,4 +37,4 @@ class Cart(Container):
         return params
 
 
-part = Cart(name='cart')
+Cart(name='cart').run()

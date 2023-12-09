@@ -12,3 +12,8 @@ python -m unittest
 coverage run -m unittest && coverage report --skip-covered
 coverage html
 ```
+
+### Local development
+```
+pip install -e .
+```

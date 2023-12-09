@@ -1,7 +1,7 @@
-from padam.parts.panel import EdgeBandedPanel, Panel
+from padam.parts.panel import EdgeBandedPanel
 
 
-part = EdgeBandedPanel(
+EdgeBandedPanel(
     name='panel',
     length=800,
     width=200,
@@ -12,4 +12,4 @@ part = EdgeBandedPanel(
     left_edge_banding_thickness=10,
     right_edge_banding_thickness=10,
     edge_banding_style='length',
-)
+).run()
