@@ -45,9 +45,6 @@ class Part:
     def get_params(self) -> OrderedDict[str, Any]:
         return collections.OrderedDict([('name', self.name or '')])
 
-    def bom_part(self, obj: OpenSCADObject, description: str='', per_unit_price:float=None, currency: str='US$', *args, **kwargs) -> OpenSCADObject:
-        return obj
-
     def run(self):
         from padam.command import run
         run(self)
