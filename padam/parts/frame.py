@@ -1,4 +1,3 @@
-import collections
 from typing import Any, List, Optional, OrderedDict
 from padam.parts import Part
 from padam.parts.panel import Panel
