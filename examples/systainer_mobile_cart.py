@@ -1,5 +1,5 @@
 from typing import List
-from padam.parts import Container
+from padam.parts import Part
 from padam.parts.frame import Frame
 
 THICKNESS = 20
@@ -16,7 +16,7 @@ CABINET_HEIGHT = TOTAL_HEIGHT - ROLLER_HEIGHT - TOP_THICKNESS
 CABINET_DEPTH = DRAWER_SLIDER_LENGHT
 
 
-class Cart(Container):
+class Cart(Part):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.cabinet = self.add_part(

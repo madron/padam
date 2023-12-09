@@ -1,1 +1,1 @@
-from padam.parts.base import Part, Container
+from padam.parts.base import Part

@@ -34,3 +34,10 @@ class PanelTest(unittest.TestCase):
         self.assertEqual(params['length'], 1000)
         self.assertEqual(params['width'], 150)
         self.assertEqual(params['thickness'], 25)
+
+    def test_get_panel_cut(self):
+        panel = Panel(1000, 30, 18, material='plywood').get_panel_cut()
+        self.assertEqual(panel['material'], 'plywood')
+        self.assertEqual(panel['length'], 1000)
+        self.assertEqual(panel['width'], 30)
+        self.assertEqual(panel['thickness'], 18)
