@@ -1,6 +1,4 @@
-import io
 import collections
-import contextlib
 import unittest
 from padam.parts import Part
 
@@ -59,8 +57,3 @@ class PartTest(unittest.TestCase):
     def test_get_params(self):
         self.assertEqual(Part().get_params(), collections.OrderedDict([('name', '')]))
         self.assertEqual(Part(name='drawer').get_params(), collections.OrderedDict([('name', 'drawer')]))
-
-    def test_run(self):
-        with io.StringIO() as buf:
-            with contextlib.redirect_stdout(buf):
-                Part().run()

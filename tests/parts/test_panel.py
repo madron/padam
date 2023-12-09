@@ -1,6 +1,8 @@
+import io
+import contextlib
 import unittest
-from solid import cube
-from padam.parts.panel import Panel
+from solid import color, cube
+from padam.parts.panel import EdgeBandedPanel, Panel
 
 
 class PanelTest(unittest.TestCase):
@@ -20,6 +22,10 @@ class PanelTest(unittest.TestCase):
         obj = Panel(1000, 200, 18, name='panel').get_object()
         self.assertIsInstance(obj, cube)
         self.assertEqual(obj.params['size'], [1000, 200, 18])
+
+    def test_get_object_color(self):
+        obj = Panel(1000, 200, 18, name='panel', material='plywood').get_object()
+        self.assertIsInstance(obj, color)
 
     def test_get_objects(self):
         objs = Panel(1000, 200, 18, name='panel').get_objects()
@@ -41,3 +47,269 @@ class PanelTest(unittest.TestCase):
         self.assertEqual(panel['length'], 1000)
         self.assertEqual(panel['width'], 30)
         self.assertEqual(panel['thickness'], 18)
+
+    def test_run(self):
+        output = io.StringIO()
+        cutlist = io.StringIO()
+        with io.StringIO() as buf:
+            with contextlib.redirect_stdout(buf):
+                Panel(1000, 30, 18).run(output=output, cutlist=cutlist)
+
+
+class EdgeBandedPanelTest(unittest.TestCase):
+    def test_str(self):
+        panel = EdgeBandedPanel(
+            length=1000,
+            width=30,
+            thickness=18,
+            name='bottom',
+            front_edge_banding_thickness=10,
+            back_edge_banding_thickness=10,
+            left_edge_banding_thickness=10,
+            right_edge_banding_thickness=10,
+            edge_banding_material='hardwood',
+            edge_banding_style='length',
+        )
+        self.assertEqual(str(panel), 'bottom')
+
+    def test_parts_length(self):
+        panel = EdgeBandedPanel(
+            length=1000,
+            width=200,
+            thickness=18,
+            name='bottom',
+            material='plywood',
+            front_edge_banding_thickness=10,
+            back_edge_banding_thickness=10,
+            left_edge_banding_thickness=10,
+            right_edge_banding_thickness=10,
+            edge_banding_material='hardwood',
+            edge_banding_style='length',
+        )
+        self.assertEqual(len(panel.parts), 5)
+        # Front
+        part = panel.parts[0]
+        self.assertEqual(part.length, 1000)
+        self.assertEqual(part.width, 10)
+        self.assertEqual(part.thickness, 18)
+        self.assertEqual(part.material, 'hardwood')
+        self.assertEqual(part.name, 'front_edge')
+        # back
+        part = panel.parts[1]
+        self.assertEqual(part.length, 1000)
+        self.assertEqual(part.width, 10)
+        self.assertEqual(part.thickness, 18)
+        self.assertEqual(part.material, 'hardwood')
+        self.assertEqual(part.name, 'back_edge')
+        # left
+        part = panel.parts[2]
+        self.assertEqual(part.length, 180)
+        self.assertEqual(part.width, 10)
+        self.assertEqual(part.thickness, 18)
+        self.assertEqual(part.material, 'hardwood')
+        self.assertEqual(part.name, 'left_edge')
+        # right
+        part = panel.parts[3]
+        self.assertEqual(part.length, 180)
+        self.assertEqual(part.width, 10)
+        self.assertEqual(part.thickness, 18)
+        self.assertEqual(part.material, 'hardwood')
+        self.assertEqual(part.name, 'right_edge')
+        # Main panel
+        part = panel.parts[4]
+        self.assertEqual(part.length, 980)
+        self.assertEqual(part.width, 180)
+        self.assertEqual(part.thickness, 18)
+        self.assertEqual(part.material, 'plywood')
+        self.assertEqual(part.name, None)
+
+    def test_parts_width(self):
+        panel = EdgeBandedPanel(
+            length=1000,
+            width=200,
+            thickness=18,
+            name='bottom',
+            material='plywood',
+            front_edge_banding_thickness=10,
+            back_edge_banding_thickness=10,
+            left_edge_banding_thickness=10,
+            right_edge_banding_thickness=10,
+            edge_banding_material='hardwood',
+            edge_banding_style='width',
+        )
+        self.assertEqual(len(panel.parts), 5)
+        # Front
+        part = panel.parts[0]
+        self.assertEqual(part.length, 980)
+        self.assertEqual(part.width, 10)
+        self.assertEqual(part.thickness, 18)
+        self.assertEqual(part.material, 'hardwood')
+        self.assertEqual(part.name, 'front_edge')
+        # back
+        part = panel.parts[1]
+        self.assertEqual(part.length, 980)
+        self.assertEqual(part.width, 10)
+        self.assertEqual(part.thickness, 18)
+        self.assertEqual(part.material, 'hardwood')
+        self.assertEqual(part.name, 'back_edge')
+        # left
+        part = panel.parts[2]
+        self.assertEqual(part.length, 200)
+        self.assertEqual(part.width, 10)
+        self.assertEqual(part.thickness, 18)
+        self.assertEqual(part.material, 'hardwood')
+        self.assertEqual(part.name, 'left_edge')
+        # right
+        part = panel.parts[3]
+        self.assertEqual(part.length, 200)
+        self.assertEqual(part.width, 10)
+        self.assertEqual(part.thickness, 18)
+        self.assertEqual(part.material, 'hardwood')
+        self.assertEqual(part.name, 'right_edge')
+        # Main panel
+        part = panel.parts[4]
+        self.assertEqual(part.length, 980)
+        self.assertEqual(part.width, 180)
+        self.assertEqual(part.thickness, 18)
+        self.assertEqual(part.material, 'plywood')
+        self.assertEqual(part.name, None)
+
+    def test_parts_overlap(self):
+        panel = EdgeBandedPanel(
+            length=1000,
+            width=200,
+            thickness=18,
+            name='bottom',
+            material='plywood',
+            front_edge_banding_thickness=10,
+            back_edge_banding_thickness=10,
+            left_edge_banding_thickness=10,
+            right_edge_banding_thickness=10,
+            edge_banding_material='hardwood',
+            edge_banding_style='overlap',
+        )
+        self.assertEqual(len(panel.parts), 5)
+        # Front
+        part = panel.parts[0]
+        self.assertEqual(part.length, 1000)
+        self.assertEqual(part.width, 10)
+        self.assertEqual(part.thickness, 18)
+        self.assertEqual(part.material, 'hardwood')
+        self.assertEqual(part.name, 'front_edge')
+        # back
+        part = panel.parts[1]
+        self.assertEqual(part.length, 1000)
+        self.assertEqual(part.width, 10)
+        self.assertEqual(part.thickness, 18)
+        self.assertEqual(part.material, 'hardwood')
+        self.assertEqual(part.name, 'back_edge')
+        # left
+        part = panel.parts[2]
+        self.assertEqual(part.length, 200)
+        self.assertEqual(part.width, 10)
+        self.assertEqual(part.thickness, 18)
+        self.assertEqual(part.material, 'hardwood')
+        self.assertEqual(part.name, 'left_edge')
+        # right
+        part = panel.parts[3]
+        self.assertEqual(part.length, 200)
+        self.assertEqual(part.width, 10)
+        self.assertEqual(part.thickness, 18)
+        self.assertEqual(part.material, 'hardwood')
+        self.assertEqual(part.name, 'right_edge')
+        # Main panel
+        part = panel.parts[4]
+        self.assertEqual(part.length, 980)
+        self.assertEqual(part.width, 180)
+        self.assertEqual(part.thickness, 18)
+        self.assertEqual(part.material, 'plywood')
+        self.assertEqual(part.name, None)
+
+    def test_materials(self):
+        panel = EdgeBandedPanel(
+            length=1000,
+            width=30,
+            thickness=18,
+            name='bottom',
+            front_edge_banding_thickness=10,
+            back_edge_banding_thickness=10,
+            left_edge_banding_thickness=10,
+            right_edge_banding_thickness=10,
+            edge_banding_material='hardwood',
+            edge_banding_style='length',
+        )
+        # self.assertEqual(panel.materials,  [dict(names=[], part=panel)])
+        # Front
+        material = panel.materials[0]
+        self.assertEqual(material['names'], ['bottom', 'front_edge'])
+        self.assertIsInstance(material['part'], Panel)
+        # back
+        material = panel.materials[1]
+        self.assertEqual(material['names'], ['bottom', 'back_edge'])
+        self.assertIsInstance(material['part'], Panel)
+        # left
+        material = panel.materials[2]
+        self.assertEqual(material['names'], ['bottom', 'left_edge'])
+        self.assertIsInstance(material['part'], Panel)
+        # right
+        material = panel.materials[3]
+        self.assertEqual(material['names'], ['bottom', 'right_edge'])
+        self.assertIsInstance(material['part'], Panel)
+        # Main panel
+        material = panel.materials[4]
+        self.assertEqual(material['names'], ['bottom'])
+        self.assertIsInstance(material['part'], Panel)
+
+    def test_get_objects_length(self):
+        panel = EdgeBandedPanel(
+            length=1000,
+            width=30,
+            thickness=18,
+            name='bottom',
+            front_edge_banding_thickness=10,
+            back_edge_banding_thickness=10,
+            left_edge_banding_thickness=10,
+            right_edge_banding_thickness=10,
+            edge_banding_material='hardwood',
+            edge_banding_style='length',
+        )
+        objs = panel.get_objects()
+        self.assertEqual(len(objs), 5)
+
+    def test_get_objects_width(self):
+        panel = EdgeBandedPanel(
+            length=1000,
+            width=30,
+            thickness=18,
+            name='bottom',
+            front_edge_banding_thickness=10,
+            back_edge_banding_thickness=10,
+            left_edge_banding_thickness=10,
+            right_edge_banding_thickness=10,
+            edge_banding_material='hardwood',
+            edge_banding_style='width',
+        )
+        objs = panel.get_objects()
+        self.assertEqual(len(objs), 5)
+
+    def test_get_params(self):
+        panel = EdgeBandedPanel(
+            length=1000,
+            width=200,
+            thickness=18,
+            name='bottom',
+            material='plywood',
+            front_edge_banding_thickness=10,
+            back_edge_banding_thickness=10,
+            left_edge_banding_thickness=10,
+            right_edge_banding_thickness=10,
+            edge_banding_material='hardwood',
+            edge_banding_style='length',
+        )
+        params = panel.get_params()
+        self.assertEqual(len(params), 5)
+        self.assertEqual(params['name'], 'bottom')
+        self.assertEqual(params['material'], 'plywood')
+        self.assertEqual(params['length'], 1000)
+        self.assertEqual(params['width'], 200)
+        self.assertEqual(params['thickness'], 18)

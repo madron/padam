@@ -7,7 +7,7 @@ from padam.utils import get_cutlist
 CUTLIST_FORMATS = ['cutlistoptimizer']
 
 
-def run(part):
+def run(part, output=None, cutlist=None):
     parser = argparse.ArgumentParser(
         prog = 'Padam',
         description = 'Python Aided Design And Manifacturing',
@@ -28,12 +28,13 @@ def run(part):
         if params:
             sys.stdout.write('\n')
 
-    if args.output:
+    output = output or args.output
+    if output:
         rendered = ''.join([scad_render(obj) for obj in part.get_objects()])
-        args.output.write(rendered)
-        args.output.close()
+        output.write(rendered)
+        output.close()
 
-
-    if args.cutlist:
-        args.cutlist.write(get_cutlist(part))
-        args.cutlist.close()
+    cutlist = cutlist or args.cutlist
+    if cutlist:
+        cutlist.write(get_cutlist(part))
+        cutlist.close()

@@ -46,6 +46,6 @@ class Part:
     def get_params(self) -> OrderedDict[str, Any]:
         return collections.OrderedDict([('name', self.name or '')])
 
-    def run(self):
+    def run(self, **kwargs):
         from padam.command import run
-        run(self)
+        run(self, **kwargs)
