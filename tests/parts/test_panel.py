@@ -1,6 +1,7 @@
 import io
 import contextlib
 import unittest
+from pydantic import ValidationError
 from solid import color, cube
 from padam.parts.panel import EdgeBandedPanel, Panel
 
@@ -9,6 +10,70 @@ class PanelTest(unittest.TestCase):
     def test_str(self):
         panel = Panel(1000, 30, 18, name='bottom')
         self.assertEqual(str(panel), 'bottom')
+
+    def test_default(self):
+        default = dict(
+            material='plywood',
+            width=400,
+            thickness=18,
+        )
+        panel = Panel(1000, default=default)
+        self.assertEqual(panel.length, 1000)
+        self.assertEqual(panel.width, 400)
+        self.assertEqual(panel.thickness, 18)
+        self.assertEqual(panel.material, 'plywood')
+
+    def test_default_not_inexisting_field(self):
+        default = dict(wrong_field='no problem')
+        panel = Panel(1000, 30, 18, default=default)
+        self.assertEqual(panel.length, 1000)
+        self.assertEqual(panel.width, 30)
+        self.assertEqual(panel.thickness, 18)
+        self.assertEqual(panel.material, '')
+
+    def test_default_wrong_material(self):
+        default = dict(material=20)
+        with self.assertRaises(ValidationError) as cm:
+            Panel(1000, 30, 18, default=default)
+        errors = cm.exception.errors()
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0]['loc'], ('material',))
+        self.assertEqual(errors[0]['msg'], 'Input should be a valid string')
+
+    def test_default_wrong_length(self):
+        default = dict(length='200 mm')
+        with self.assertRaises(ValidationError) as cm:
+            Panel(width=400, thickness=18, default=default)
+        errors = cm.exception.errors()
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0]['loc'], ('length',))
+        self.assertEqual(errors[0]['msg'], 'Input should be a valid number, unable to parse string as a number')
+
+    def test_default_missing_thickness(self):
+        default = dict(material='plywood')
+        with self.assertRaises(ValidationError) as cm:
+            Panel(1000, 30, default=default)
+        errors = cm.exception.errors()
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(errors[0]['loc'], ('thickness',))
+        self.assertEqual(errors[0]['msg'], 'Input should be a valid number')
+
+    def test_cut_oversize(self):
+        panel = Panel(1000, 30, 18)
+        self.assertEqual(panel.cut_length_oversize, 0)
+        self.assertEqual(panel.cut_width_oversize, 0)
+        self.assertEqual(panel.cut_thickness_oversize, 0)
+
+    def test_cut_oversize_default(self):
+        default = dict(
+            cut_length_oversize=5,
+            cut_width_oversize=4,
+            cut_thickness_oversize=3,
+        )
+        panel = Panel(1000, 30, 18, default=default)
+        self.assertEqual(panel.cut_length_oversize, 5)
+        self.assertEqual(panel.cut_width_oversize, 4)
+        self.assertEqual(panel.cut_thickness_oversize, 3)
 
     def test_parts(self):
         panel = Panel(1000, 30, 18)

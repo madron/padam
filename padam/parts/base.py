@@ -1,26 +1,33 @@
-from __future__ import annotations
 import collections
-from typing import Any, Dict, List, Optional, OrderedDict
-from solid import OpenSCADObject
+from typing import Any, Dict, List, OrderedDict, Self
+from pydantic import BaseModel, model_validator
+from solid.solidpython import OpenSCADObject
 
 
-class Part:
-    def __init__(self, name: Optional[str] = None, settings: Optional[Dict[str, Any]] = dict()):
-        self.name = name
-        self.settings = settings
-        self._parts = []
+class Part(BaseModel):
+    name: str | None = None
+    default: Dict[str, Any] = dict()
+    parts: List[Self] | None = []
+
+    @model_validator(mode='before')
+    def default_values(cls, values: Any) -> Any:
+        default = values.get('default', None)
+        if default:
+            fields = [x for x in list(cls.__pydantic_fields__.keys()) if x not in ('default', 'parts')]
+            values_fields = list(values.keys())
+            for field in fields:
+                if field not in values_fields or values[field] is None:
+                    value = default.get(field, None)
+                    if value:
+                        values[field] = value
+        return values
 
     def __str__(self):
-        return self.name or super().__str__()
+        return self.name or ''
 
-    def add_part(self, part: Part) -> Part:
-        part.settings = self.settings
-        self._parts.append(part)
+    def add_part(self, part: Self) -> Self:
+        self.parts.append(part)
         return part
-
-    @property
-    def parts(self):
-        return self._parts
 
     @property
     def materials(self):

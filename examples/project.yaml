@@ -1,0 +1,14 @@
+default:
+  cabinet:
+    material: plywood
+    thickness: 18
+  cabinet-base:
+    inherits: cabinet
+    depth: 600
+    height: 700
+  cabinet-top:
+    inherits: cabinet
+    depth: 400
+    height: 600
+
+project:

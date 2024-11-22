@@ -7,6 +7,10 @@ class PartTest(unittest.TestCase):
     def test_str(self):
         self.assertEqual(str(Part(name='mypart')), 'mypart')
 
+    def test_default(self):
+        default = dict(name='default-name')
+        self.assertEqual(str(Part(default=default)), 'default-name')
+
     def test_no_parts(self):
         part = Part()
         self.assertEqual(part.parts, [])

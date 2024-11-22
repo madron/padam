@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "padam"
+version = "0.0.1"
+dependencies = [
+  "solidpython>=1.1",
+]
+requires-python = ">=3.9"
+authors = [
+  {name = "Massimiliano Ravelli", email = "massimiliano.ravelli@google.com"},
+]
+maintainers = [
+  {name = "Massimiliano Ravelli", email = "massimiliano.ravelli@google.com"},
+]
+description = "Python Aided Design and Manifacturing"
+readme = "README.md"
+license = {file = "LICENSE"}
+keywords = ["woodworking", "cad", "cam", "openscad", "freecad"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python"
+]
+
+[tool.setuptools.packages]
+find = {}
+
+[project.urls]
+Homepage = "https://github.com/madron/padam"
+Documentation = "https://github.com/madron/padam/blob/main/README.md"
+Repository = "https://github.com/madron/padam.git"

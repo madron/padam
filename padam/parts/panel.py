@@ -11,26 +11,27 @@ from padam.parts import Part
 
 
 class Panel(Part):
+    length: float
+    width: float
+    thickness: float
+    material: str = ''
+    cut_length_oversize: float | None = 0
+    cut_width_oversize: float | None = 0
+    cut_thickness_oversize: float | None = 0
+
     def __init__(
         self,
-        length: float,
-        width: float,
-        thickness: float,
-        material: Optional[str] = None,
-        name: Optional[str] = None,
-        cut_length_oversize: Optional[float] = None,
-        cut_width_oversize: Optional[float] = None,
-        cut_thickness_oversize: Optional[float] = None,
+        length: float | None = None,
+        width: float | None = None,
+        thickness: float | None = None,
+        **kwargs,
     ):
-        super().__init__(name=name)
-        self.length = length
-        self.width = width
-        self.thickness = thickness
-        self.material = material
-        settings = self.settings.get('panel', dict())
-        self.cut_length_oversize = cut_length_oversize or settings.get('cut_length_oversize', None) or 0
-        self.cut_width_oversize = cut_width_oversize or settings.get('cut_width_oversize', None) or 0
-        self.cut_thickness_oversize = cut_thickness_oversize or settings.get('cut_thickness_oversize', None) or 0
+      super().__init__(
+          length=length or kwargs.get('length', None),
+          width=width or kwargs.get('width', None),
+          thickness=thickness or kwargs.get('thickness', None),
+          **kwargs,
+        )
 
     def get_object(self) -> OpenSCADObject:
         obj = cube([self.length, self.width, self.thickness])
@@ -56,123 +57,105 @@ class Panel(Part):
         )
 
 
-class EdgeBandedPanel(Part):
-    def __init__(
-        self,
-        length: float,
-        width: float,
-        thickness: float,
-        material: Optional[str] = None,
-        name: Optional[str] = None,
-        front_edge_banding_thickness: Optional[float] = None,
-        back_edge_banding_thickness: Optional[float] = None,
-        left_edge_banding_thickness: Optional[float] = None,
-        right_edge_banding_thickness: Optional[float] = None,
-        edge_banding_material: Optional[float] = 'hardwood',
-        edge_banding_style: Optional[str] = 'length',
-    ):
-        super().__init__(name=name)
-        self.length = length
-        self.width = width
-        self.thickness = thickness
-        self.material = material
-        self.front_edge_banding_thickness = front_edge_banding_thickness
-        self.back_edge_banding_thickness = back_edge_banding_thickness
-        self.left_edge_banding_thickness = left_edge_banding_thickness
-        self.right_edge_banding_thickness = right_edge_banding_thickness
-        self.edge_banding_material = edge_banding_material
-        self.edge_banding_style = edge_banding_style
-        settings = self.settings.get('panel', dict())
-        self.edge_band_cut_length_oversize = settings.get('cut_length_oversize', None) or 0
-        self.edge_band_cut_width_oversize = settings.get('cut_width_oversize', None) or 0
-        self.edge_band_cut_thickness_oversize = settings.get('cut_thickness_oversize', None) or 0
+class EdgeBandedPanel(Panel):
+    front_edge_banding_thickness: float | None = None,
+    back_edge_banding_thickness: float | None = None,
+    left_edge_banding_thickness: float | None = None,
+    right_edge_banding_thickness: float | None = None,
+    edge_banding_material: str | None = 'hardwood',
+    edge_banding_style: str | None = 'length',
+
+    def model_post_init(self, __context: Any) -> None:
+        self._edge_band_cut_length_oversize = self.cut_length_oversize or 0
+        self._edge_band_cut_width_oversize = self.cut_width_oversize or 0
+        self._edge_band_cut_thickness_oversize = self.cut_thickness_oversize or 0
         # calculated
-        self.main_panel_length = self.length
-        self.main_panel_width = self.width
+        self._main_panel_length = self.length
+        self._main_panel_width = self.width
         if self.front_edge_banding_thickness:
-            self.main_panel_width -= self.front_edge_banding_thickness
+            self._main_panel_width -= self.front_edge_banding_thickness
             if self.edge_banding_style in ['overlap', 'length']:
                 length = self.length
             elif self.edge_banding_style == 'width':
                 length = self.length - (self.left_edge_banding_thickness or 0) - (self.right_edge_banding_thickness or 0)
-            self.front_edge = self.add_part(Panel(
+            self._front_edge = self.add_part(Panel(
                 name='front_edge',
                 length=length,
                 width=self.front_edge_banding_thickness,
                 thickness=self.thickness,
                 material=self.edge_banding_material,
-                cut_length_oversize=self.edge_band_cut_length_oversize,
-                cut_width_oversize=self.edge_band_cut_width_oversize,
-                cut_thickness_oversize=self.edge_band_cut_thickness_oversize,
+                cut_length_oversize=self._edge_band_cut_length_oversize,
+                cut_width_oversize=self._edge_band_cut_width_oversize,
+                cut_thickness_oversize=self._edge_band_cut_thickness_oversize,
             ))
         if self.back_edge_banding_thickness:
-            self.main_panel_width -= self.back_edge_banding_thickness
+            self._main_panel_width -= self.back_edge_banding_thickness
             if self.edge_banding_style in ['overlap', 'length']:
                 length = self.length
             elif self.edge_banding_style == 'width':
                 length = self.length - (self.left_edge_banding_thickness or 0) - (self.right_edge_banding_thickness or 0)
-            self.back_edge = self.add_part(Panel(
+            self._back_edge = self.add_part(Panel(
                 name='back_edge',
                 length=length,
                 width=self.back_edge_banding_thickness,
                 thickness=self.thickness,
                 material=self.edge_banding_material,
-                cut_length_oversize=self.edge_band_cut_length_oversize,
-                cut_width_oversize=self.edge_band_cut_width_oversize,
-                cut_thickness_oversize=self.edge_band_cut_thickness_oversize,
+                cut_length_oversize=self._edge_band_cut_length_oversize,
+                cut_width_oversize=self._edge_band_cut_width_oversize,
+                cut_thickness_oversize=self._edge_band_cut_thickness_oversize,
             ))
         if self.left_edge_banding_thickness:
-            self.main_panel_length -= self.left_edge_banding_thickness
+            self._main_panel_length -= self.left_edge_banding_thickness
             if self.edge_banding_style in ['overlap', 'width']:
                 length = self.width
             elif self.edge_banding_style == 'length':
                 length = self.width - (self.front_edge_banding_thickness or 0) - (self.back_edge_banding_thickness or 0)
-            self.left_edge = self.add_part(Panel(
+            self._left_edge = self.add_part(Panel(
                 name='left_edge',
                 length=length,
                 width=self.left_edge_banding_thickness,
                 thickness=self.thickness,
                 material=self.edge_banding_material,
-                cut_length_oversize=self.edge_band_cut_length_oversize,
-                cut_width_oversize=self.edge_band_cut_width_oversize,
-                cut_thickness_oversize=self.edge_band_cut_thickness_oversize,
+                cut_length_oversize=self._edge_band_cut_length_oversize,
+                cut_width_oversize=self._edge_band_cut_width_oversize,
+                cut_thickness_oversize=self._edge_band_cut_thickness_oversize,
             ))
         if self.right_edge_banding_thickness:
-            self.main_panel_length -= self.right_edge_banding_thickness
+            self._main_panel_length -= self.right_edge_banding_thickness
             if self.edge_banding_style in ['overlap', 'width']:
                 length = self.width
             elif self.edge_banding_style == 'length':
                 length = self.width - (self.front_edge_banding_thickness or 0) - (self.back_edge_banding_thickness or 0)
-            self.right_edge = self.add_part(Panel(
+            self._right_edge = self.add_part(Panel(
                 name='right_edge',
                 length=length,
                 width=self.right_edge_banding_thickness,
                 thickness=self.thickness,
                 material=self.edge_banding_material,
-                cut_length_oversize=self.edge_band_cut_length_oversize,
-                cut_width_oversize=self.edge_band_cut_width_oversize,
-                cut_thickness_oversize=self.edge_band_cut_thickness_oversize,
+                cut_length_oversize=self._edge_band_cut_length_oversize,
+                cut_width_oversize=self._edge_band_cut_width_oversize,
+                cut_thickness_oversize=self._edge_band_cut_thickness_oversize,
             ))
-        self.main_panel = self.add_part(Panel(
-            length=self.main_panel_length,
-            width=self.main_panel_width,
+        self._main_panel = self.add_part(Panel(
+            length=self._main_panel_length,
+            width=self._main_panel_width,
             thickness=self.thickness,
             material=self.material,
         ))
 
     def get_objects(self) -> List[OpenSCADObject]:
-        main_panel = self.main_panel.get_object()
+        main_panel = self._main_panel.get_object()
         objects = []
         if self.front_edge_banding_thickness:
             main_panel = forward(self.front_edge_banding_thickness)(main_panel)
             if self.edge_banding_style == 'width':
                 offset = self.left_edge_banding_thickness or 0
-                objects.append(right(offset)(self.front_edge.get_object()))
+                objects.append(right(offset)(self._front_edge.get_object()))
             else:
-                objects.append(self.front_edge.get_object())
+                objects.append(self._front_edge.get_object())
         if self.back_edge_banding_thickness:
-            offset = (self.front_edge_banding_thickness or 0) + self.main_panel_width
-            back_edge = forward(offset)(self.back_edge.get_object())
+            offset = (self.front_edge_banding_thickness or 0) + self._main_panel_width
+            back_edge = forward(offset)(self._back_edge.get_object())
             if self.edge_banding_style == 'width':
                 offset = self.left_edge_banding_thickness or 0
                 objects.append(right(offset)(back_edge))
@@ -180,15 +163,15 @@ class EdgeBandedPanel(Part):
                 objects.append(back_edge)
         if self.left_edge_banding_thickness:
             main_panel = right(self.left_edge_banding_thickness)(main_panel)
-            left_edge = right(self.left_edge_banding_thickness)(rotate([0, 0, 90])(self.left_edge.get_object()))
+            left_edge = right(self.left_edge_banding_thickness)(rotate([0, 0, 90])(self._left_edge.get_object()))
             if self.edge_banding_style == 'length':
                 offset = self.front_edge_banding_thickness or 0
                 objects.append(forward(offset)(left_edge))
             else:
                 objects.append(left_edge)
         if self.right_edge_banding_thickness:
-            offset = (self.left_edge_banding_thickness or 0) + (self.right_edge_banding_thickness or 0) + self.main_panel_length
-            right_edge = right(offset)(rotate([0, 0, 90])(self.right_edge.get_object()))
+            offset = (self.left_edge_banding_thickness or 0) + (self.right_edge_banding_thickness or 0) + self._main_panel_length
+            right_edge = right(offset)(rotate([0, 0, 90])(self._right_edge.get_object()))
             if self.edge_banding_style == 'length':
                 offset = self.front_edge_banding_thickness or 0
                 objects.append(forward(offset)(right_edge))
