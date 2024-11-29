@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, OrderedDict
+from typing import Any, Dict, List, OrderedDict
 from solid import (
     color,
     cube,
@@ -14,7 +14,7 @@ class Panel(Part):
     length: float
     width: float
     thickness: float
-    material: str = ''
+    material: str | None = None
     cut_length_oversize: float | None = 0
     cut_width_oversize: float | None = 0
     cut_thickness_oversize: float | None = 0
@@ -32,6 +32,10 @@ class Panel(Part):
           thickness=thickness or kwargs.get('thickness', None),
           **kwargs,
         )
+
+    def model_post_init(self, __context: Any) -> None:
+        # defaults
+        self.material = self.material or ''
 
     def get_object(self) -> OpenSCADObject:
         obj = cube([self.length, self.width, self.thickness])

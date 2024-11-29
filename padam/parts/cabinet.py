@@ -1,4 +1,4 @@
-from typing import Any, List, Optional, OrderedDict
+from typing import Any, List, OrderedDict
 from padam.parts.panel import Panel
 from padam.parts.frame import Frame
 from solid import OpenSCADObject, rotate
@@ -6,47 +6,29 @@ from solid.utils import back, right, up
 
 
 class Cabinet(Frame):
-    def __init__(
-        self,
-        length: Optional[int] = 1200,
-        height: Optional[int] = 700,
-        depth: Optional[int] = 600,
-        thickness: Optional[float] = 18,
-        material: Optional[str] = None,
-        top_thickness: Optional[float] = None,
-        bottom_thickness: Optional[float] = None,
-        side_thickness: Optional[float] = None,
-        top_material: Optional[str] = None,
-        bottom_material: Optional[str] = None,
-        side_material: Optional[str] = None,
-        back_thickness: Optional[float] = None,
-        back_material: Optional[str] = None,
-        reveal: Optional[float] = 2,
-        door_number: Optional[int] = 0,
-        door_thickness: Optional[float] = None,
-        door_material: Optional[str] = None,
-        name: Optional[str] = None,
-    ):
-        super().__init__(
-            length=length,
-            height=height,
-            depth=depth,
-            thickness=thickness,
-            material=material,
-            top_thickness=top_thickness,
-            bottom_thickness=bottom_thickness,
-            side_thickness=side_thickness,
-            top_material=top_material,
-            bottom_material=bottom_material,
-            side_material=side_material,
-            name=name,
-        )
-        self.back_thickness = back_thickness or thickness
-        self.back_material = back_material or material
-        self.door_thickness = door_thickness or thickness
-        self.door_material = door_material or material
-        self.door_number = door_number
-        self.reveal = reveal
+    back_thickness: float | None = None
+    back_material: str | None = None
+    reveal: float | None = None
+    door_number: int | None = None
+    door_thickness: float | None = None
+    door_material: str | None = None
+    # calculated attributes
+    interior_depth: float | None = None
+    # parts
+    back_panel: Panel | None = None
+    door_panel: Panel | None = None
+    left_door_panel: Panel | None = None
+    right_door_panel: Panel | None = None
+
+    def model_post_init(self, __context: Any) -> None:
+        super().model_post_init(__context)
+        # defaults
+        self.back_thickness = self.back_thickness or self.thickness
+        self.back_material = self.back_material or self.material
+        self.door_thickness = self.door_thickness or self.thickness
+        self.door_material = self.door_material or self.material
+        self.door_number = self.door_number or 0
+        self.reveal = self.reveal or 2
         # calculated attributes
         door_offset = self.reveal * 2
         self.interior_depth: float = self.depth - self.back_thickness

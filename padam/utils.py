@@ -8,10 +8,11 @@ def get_panel_list(part: Part):
     panels = []
     for material in [m for m in part.materials if isinstance(m['part'], Panel)]:
         panel = material['part']
+        panel_thickness = int(round(panel.thickness))
         if panel.material:
-            material_label = '{}_{}'.format(panel.material, panel.thickness)
+            material_label = '{}_{}'.format(panel.material, panel_thickness)
         else:
-            material_label = str(panel.thickness)
+            material_label = str(panel_thickness)
         panels.append(
             dict(
                 label='_'.join(material['names']),
