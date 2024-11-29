@@ -37,6 +37,10 @@ class CabinetTest(unittest.TestCase):
         self.assertEqual(cabinet.parts[5].name, 'left_door_panel')
         self.assertEqual(cabinet.parts[6].name, 'right_door_panel')
 
+    def test_default(self):
+        cabinet = Cabinet(600, 400, default=dict(thickness=22))
+        self.assertEqual(cabinet.thickness, 22)
+
     def test_materials(self):
         cabinet = Cabinet(1000, 30, 18)
         self.assertEqual(len(cabinet.materials), 5)

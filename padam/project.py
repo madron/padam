@@ -1,16 +1,24 @@
 from copy import copy
-from typing import Any, Dict
+from typing import Any, Dict, Type
 from pydantic import BaseModel
 from pydantic import BaseModel, Field, field_validator
+from padam import parts
+from padam.parts import Part
 
 
 class Project(BaseModel):
     default: Dict[str, Dict[str, Any]] | None = dict()
+    part: Dict[str, Any] | None = dict()
 
     @field_validator('default')
     @classmethod
     def get_default(cls, data: Dict[str, Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
         return get_default(data)
+
+    @field_validator('part')
+    @classmethod
+    def get_part(cls, data: Dict[str, Any], values: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
+        return get_part(data, values.data['default'])
 
 
 def has_parent(data: Dict[str, Dict[str, Any]]) -> bool:
@@ -36,3 +44,25 @@ def get_default(data: Dict[str, Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
     if has_parent(default):
         default = get_default(default)
     return default
+
+
+def get_part(data: Dict[str, Any], default: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:
+    result = dict()
+    for part_name, part_value in data.items():
+        default_value = dict()
+        if 'default' in part_value:
+            default_name = part_value.pop('default')
+            default_value = default[default_name]
+        part_class = get_part_class(part_value['type'])
+        result[part_name] = part_class(name=part_name, default=default_value, **part_value)
+    return result
+
+
+def get_part_class(name: str) -> Type[parts.Part]:
+    class_dict = dict(
+        cabinet=parts.Cabinet,
+        frame=parts.Frame,
+        edgebandedpanel=parts.EdgeBandedPanel,
+        panel=parts.Panel,
+    )
+    return class_dict[name]
