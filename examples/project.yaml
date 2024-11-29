@@ -6,9 +6,33 @@ default:
     inherits: cabinet
     depth: 600
     height: 700
+    door_number: 1
   cabinet-top:
     inherits: cabinet
     depth: 400
     height: 600
 
-project:
+part:
+  shelf:
+    type: panel
+    default: cabinet
+    length: 1600
+    width: 250
+  base-1:
+    type: cabinet
+    default: cabinet-base
+    length: 800
+    door_number: 2
+  base-2:
+    type: cabinet
+    default: cabinet-base
+    length: 600
+  top-1:
+    type: cabinet
+    default: cabinet-top
+    length: 800
+    door_number: 2
+  top-2:
+    type: cabinet
+    default: cabinet-top
+    length: 600

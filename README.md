@@ -10,7 +10,7 @@ python -m unittest
 ### Test coverage
 ```
 coverage run -m unittest && coverage report --skip-covered
-coverage html
+coverage run -m unittest && coverage html && open file://${PWD}/htmlcov/index.html
 ```
 
 ### Local development
