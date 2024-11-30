@@ -17,7 +17,7 @@ class Project(BaseModel):
     @field_validator('part')
     @classmethod
     def get_part(cls, data: Dict[str, Any], values: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
-        return get_part(data, values.data['default'])
+        return get_part(data, values.data.get('default', dict()))
 
     def get_objects(self):
         objs = list()
@@ -66,7 +66,7 @@ def get_part(data: Dict[str, Any], default: Dict[str, Dict[str, Any]]) -> Dict[s
         default_value = dict()
         if 'default' in part_value:
             default_name = part_value.pop('default')
-            default_value = default[default_name]
+            default_value = default.get(default_name, dict())
         part_class = get_part_class(part_value['type'])
         result[part_name] = part_class(name=part_name, default=default_value, **part_value)
     return result

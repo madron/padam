@@ -72,6 +72,19 @@ class ProjectTest(unittest.TestCase):
         self.assertEqual(cabinet.depth, 600)
         self.assertEqual(len(project.part), 1)
 
+    def test_no_default(self):
+        part = dict(
+            base=dict(type='cabinet', default='cabinet', length=800, depth=600, thickness=19),
+        )
+        project = Project(part=part)
+        self.assertEqual(project.default, dict())
+        cabinet: Cabinet = project.part['base']
+        self.assertEqual(cabinet.name, 'base')
+        self.assertEqual(cabinet.length, 800)
+        self.assertEqual(cabinet.depth, 600)
+        self.assertEqual(cabinet.thickness, 19)
+        self.assertEqual(len(project.part), 1)
+
     def test_get_objects(self):
         part = dict(
             shelf1=dict(type='panel', length=800, width=250, thickness=18),
