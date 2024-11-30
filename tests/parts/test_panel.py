@@ -1,6 +1,6 @@
 import unittest
 from pydantic import ValidationError
-from solid import color, cube
+from solid import color, cube, scad_render
 from padam.parts.panel import EdgeBandedPanel, Panel
 
 
@@ -85,6 +85,13 @@ class PanelTest(unittest.TestCase):
         obj = Panel(1000, 200, 18, name='panel').get_object()
         self.assertIsInstance(obj, cube)
         self.assertEqual(obj.params['size'], [1000, 200, 18])
+        scad = scad_render(obj)
+        self.assertEqual(scad,'\n\ncube(size = [1000.0000000000, 200.0000000000, 18.0000000000]);')
+
+    def test_translate_object(self):
+        obj = Panel(1000, 300, 18, x=100, y=-300).get_object()
+        scad = scad_render(obj)
+        self.assertEqual(scad,'\n\ntranslate(v = [0, 0, 10]) {\n\tcube(size = [1000.0000000000, 300.0000000000, 18.0000000000]);\n}')
 
     def test_get_object_color(self):
         obj = Panel(1000, 200, 18, name='panel', material='plywood').get_object()

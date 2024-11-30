@@ -22,7 +22,8 @@ class Project(BaseModel):
     def get_objects(self):
         objs = list()
         for part in self.part.values():
-            objs.extend(part.get_objects())
+            for obj in part.get_objects():
+                objs.append(obj)
         return objs
 
     def get_materials(self):

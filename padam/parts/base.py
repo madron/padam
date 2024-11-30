@@ -2,12 +2,16 @@ import collections
 from typing import Any, Dict, List, OrderedDict, Self
 from pydantic import BaseModel, model_validator
 from solid.solidpython import OpenSCADObject
+from solid.utils import translate
 
 
 class Part(BaseModel):
     name: str | None = None
     default: Dict[str, Any] = dict()
     parts: List[Self] | None = []
+    x: float | None = None
+    y: float | None = None
+    z: float | None = None
 
     @model_validator(mode='before')
     def default_values(cls, values: Any) -> Any:
@@ -21,6 +25,12 @@ class Part(BaseModel):
                     if value:
                         values[field] = value
         return values
+
+    def model_post_init(self, __context: Any) -> None:
+        # defaults
+        self.x = self.x or 0
+        self.y = self.y or 0
+        self.z = self.z or 0
 
     def __str__(self):
         return self.name or ''
@@ -42,6 +52,11 @@ class Part(BaseModel):
             return materials
         else:
             return [dict(names=names, part=self)]
+
+    def translate_object(self, obj: OpenSCADObject) -> OpenSCADObject:
+        if self.x or self.y or self.z:
+            obj = translate([0,0,10])(obj)
+        return obj
 
     def get_object(self) -> OpenSCADObject:
         raise NotImplementedError()

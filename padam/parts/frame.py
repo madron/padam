@@ -73,6 +73,7 @@ class Frame(Part):
         panels = [top_panel, bottom_panel, left_panel, right_panel]
         panels = [right(self.side_thickness)(p) for p in panels]
         panels = [back(self.depth)(p) for p in panels]
+        panels = [self.translate_object(p) for p in panels]
         return panels
 
     def get_params(self) -> OrderedDict[str, Any]:
