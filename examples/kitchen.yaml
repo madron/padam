@@ -2,12 +2,12 @@ default:
   cabinet:
     material: plywood
     thickness: 18
-  cabinet-base:
+  cabinet_base:
     inherits: cabinet
     depth: 600
     height: 700
     door_number: 1
-  cabinet-top:
+  cabinet_top:
     inherits: cabinet
     depth: 400
     height: 600
@@ -22,23 +22,23 @@ part:
     width: 250
     y: -250
     z: 1000
-  base-1:
+  base_1:
     type: cabinet
-    default: cabinet-base
+    default: cabinet_base
     length: 800
     door_number: 2
-  base-2:
+  base_2:
     type: cabinet
-    default: cabinet-base
+    default: cabinet_base
     length: 600
     x: 801
-  top-1:
+  top_1:
     type: cabinet
-    default: cabinet-top
+    default: cabinet_top
     length: 800
     door_number: 2
-  top-2:
+  top_2:
     type: cabinet
-    default: cabinet-top
+    default: cabinet_top
     length: 600
     x: 801
