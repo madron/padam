@@ -11,6 +11,7 @@ python = "^3.12"
 solidpython = "^1.1.3"
 pydantic = "^2.10.1"
 setuptools = "^75.6.0"
+pyyaml = "^6.0.2"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.6.7"

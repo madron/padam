@@ -1,5 +1,6 @@
 import argparse
 import sys
+import yaml
 from solid import scad_render
 from padam.utils import get_cutlist
 
@@ -7,16 +8,21 @@ from padam.utils import get_cutlist
 CUTLIST_FORMATS = ['cutlistoptimizer']
 
 
-def run(part, output=None, cutlist=None):
+def run(output=None, cutlist=None):
     parser = argparse.ArgumentParser(
-        prog = 'Padam',
+        prog = 'padam',
         description = 'Python Aided Design And Manifacturing',
     )
+    parser.add_argument('project', type=argparse.FileType('r'), help='Project file in yaml format')
     parser.add_argument('-o', '--output', type=argparse.FileType('w'))
     parser.add_argument('-q', '--quiet', action='store_true')
     parser.add_argument('--cutlist', type=argparse.FileType('w'))
     parser.add_argument('--cutlist-format', type=str, choices=CUTLIST_FORMATS, default=CUTLIST_FORMATS[0])
     args = parser.parse_args()
+
+    project = yaml.safe_load(args.project)
+
+    return
 
     if not args.quiet:
         sys.stdout.write('Parameters\n')
