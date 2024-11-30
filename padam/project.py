@@ -1,7 +1,7 @@
 from copy import copy
 from typing import Any, Dict, Type
 from pydantic import BaseModel
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, field_validator
 from padam import parts
 from padam.parts import Part
 
