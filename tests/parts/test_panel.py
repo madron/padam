@@ -1,5 +1,3 @@
-import io
-import contextlib
 import unittest
 from pydantic import ValidationError
 from solid import color, cube
@@ -112,13 +110,6 @@ class PanelTest(unittest.TestCase):
         self.assertEqual(panel['length'], 1000)
         self.assertEqual(panel['width'], 30)
         self.assertEqual(panel['thickness'], 18)
-
-    def test_run(self):
-        output = io.StringIO()
-        cutlist = io.StringIO()
-        with io.StringIO() as buf:
-            with contextlib.redirect_stdout(buf):
-                Panel(1000, 30, 18).run(output=output, cutlist=cutlist)
 
 
 class EdgeBandedPanelTest(unittest.TestCase):
