@@ -57,7 +57,7 @@ class Cabinet(Frame):
             doors.append(door)
         doors = [back(self.depth + self.door_thickness + 1)(door) for door in doors]
         doors = [up(door_offset / 2)(door) for door in doors]
-        return super().get_objects() + [self.translate_object(back_panel)] + self.translate_object(doors)
+        return super().get_objects() + [self.translate_object(back_panel)] + [self.translate_object(x) for x in doors]
 
     def get_params(self) -> OrderedDict[str, Any]:
         params = super().get_params()

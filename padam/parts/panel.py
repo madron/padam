@@ -34,6 +34,7 @@ class Panel(Part):
         )
 
     def model_post_init(self, __context: Any) -> None:
+        super().model_post_init(__context)
         # defaults
         self.material = self.material or ''
 
@@ -70,6 +71,7 @@ class EdgeBandedPanel(Panel):
     edge_banding_style: str | None = 'length',
 
     def model_post_init(self, __context: Any) -> None:
+        super().model_post_init(__context)
         self._edge_band_cut_length_oversize = self.cut_length_oversize or 0
         self._edge_band_cut_width_oversize = self.cut_width_oversize or 0
         self._edge_band_cut_thickness_oversize = self.cut_thickness_oversize or 0

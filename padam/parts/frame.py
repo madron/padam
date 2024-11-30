@@ -44,6 +44,7 @@ class Frame(Part):
         )
 
     def model_post_init(self, __context: Any) -> None:
+        super().model_post_init(__context)
         # defaults
         self.length = self.length or 1200
         self.height = self.height or 700

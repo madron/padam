@@ -55,7 +55,7 @@ class Part(BaseModel):
 
     def translate_object(self, obj: OpenSCADObject) -> OpenSCADObject:
         if self.x or self.y or self.z:
-            obj = translate([0,0,10])(obj)
+            obj = translate([self.x, self.y, self.z])(obj)
         return obj
 
     def get_object(self) -> OpenSCADObject:

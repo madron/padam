@@ -19,11 +19,13 @@ class CommandTest(unittest.TestCase):
     def test_ok(self):
         project_yaml = '''
             part:
-                shelf:
-                    type: panel
+                base_cabinet:
+                    type: cabinet
                     length: 1600
-                    width: 250
+                    width: 800
+                    depth: 600
                     thickness: 18
+                    y: 100
         '''
         project = io.StringIO(project_yaml)
         stdout = io.StringIO()
@@ -32,6 +34,9 @@ class CommandTest(unittest.TestCase):
         cutlist = io.StringIO()
         with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr), uncloseable(output), uncloseable(cutlist):
             run(project=project, output=output, cutlist=cutlist)
-        self.assertIn('shelf', stdout.getvalue())
-        self.assertIn('cube(', output.getvalue())
-        self.assertIn('shelf', cutlist.getvalue())
+        self.assertIn('base_cabinet', stdout.getvalue())
+        self.assertIn('base_cabinet', cutlist.getvalue())
+        output = output.getvalue()
+        self.assertIn('cube', output)
+        self.assertIn('translate(v = [0, 0, 10]', output)
+        print(output)

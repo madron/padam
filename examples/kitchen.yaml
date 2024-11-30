@@ -11,6 +11,8 @@ default:
     inherits: cabinet
     depth: 400
     height: 600
+    door_number: 1
+    z: 1200
 
 part:
   shelf:
@@ -18,6 +20,8 @@ part:
     default: cabinet
     length: 1600
     width: 250
+    y: -250
+    z: 1000
   base-1:
     type: cabinet
     default: cabinet-base
@@ -27,6 +31,7 @@ part:
     type: cabinet
     default: cabinet-base
     length: 600
+    x: 801
   top-1:
     type: cabinet
     default: cabinet-top
@@ -36,3 +41,4 @@ part:
     type: cabinet
     default: cabinet-top
     length: 600
+    x: 801
