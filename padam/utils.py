@@ -1,11 +1,12 @@
 import csv
 import io
+from padam import Project
 from padam.parts import Panel, Part
 
 
-def get_panel_list(part: Part):
+def get_panel_list(project: Project):
     panels = []
-    for material in [m for m in part.materials if isinstance(m['part'], Panel)]:
+    for material in [m for m in project.get_materials() if isinstance(m['part'], Panel)]:
         panel = material['part']
         panel_thickness = int(round(panel.thickness))
         if panel.material:

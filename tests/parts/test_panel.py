@@ -79,7 +79,7 @@ class PanelTest(unittest.TestCase):
 
     def test_materials(self):
         panel = Panel(1000, 30, 18)
-        self.assertEqual(panel.materials,  [dict(names=[], part=panel)])
+        self.assertEqual(panel.get_materials(),  [dict(names=[], part=panel)])
 
     def test_get_object(self):
         obj = Panel(1000, 200, 18, name='panel').get_object()
@@ -296,23 +296,23 @@ class EdgeBandedPanelTest(unittest.TestCase):
         )
         # self.assertEqual(panel.materials,  [dict(names=[], part=panel)])
         # Front
-        material = panel.materials[0]
+        material = panel.get_materials()[0]
         self.assertEqual(material['names'], ['bottom', 'front_edge'])
         self.assertIsInstance(material['part'], Panel)
         # back
-        material = panel.materials[1]
+        material = panel.get_materials()[1]
         self.assertEqual(material['names'], ['bottom', 'back_edge'])
         self.assertIsInstance(material['part'], Panel)
         # left
-        material = panel.materials[2]
+        material = panel.get_materials()[2]
         self.assertEqual(material['names'], ['bottom', 'left_edge'])
         self.assertIsInstance(material['part'], Panel)
         # right
-        material = panel.materials[3]
+        material = panel.get_materials()[3]
         self.assertEqual(material['names'], ['bottom', 'right_edge'])
         self.assertIsInstance(material['part'], Panel)
         # Main panel
-        material = panel.materials[4]
+        material = panel.get_materials()[4]
         self.assertEqual(material['names'], ['bottom'])
         self.assertIsInstance(material['part'], Panel)
 

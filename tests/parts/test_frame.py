@@ -17,11 +17,11 @@ class FrameTest(unittest.TestCase):
 
     def test_materials(self):
         frame = Frame(1000, 30, 18)
-        self.assertEqual(len(frame.materials), 4)
-        self.assertEqual(frame.materials[0]['part'].name, 'top_panel')
-        self.assertEqual(frame.materials[1]['part'].name, 'bottom_panel')
-        self.assertEqual(frame.materials[2]['part'].name, 'left_panel')
-        self.assertEqual(frame.materials[3]['part'].name, 'right_panel')
+        self.assertEqual(len(frame.get_materials()), 4)
+        self.assertEqual(frame.get_materials()[0]['part'].name, 'top_panel')
+        self.assertEqual(frame.get_materials()[1]['part'].name, 'bottom_panel')
+        self.assertEqual(frame.get_materials()[2]['part'].name, 'left_panel')
+        self.assertEqual(frame.get_materials()[3]['part'].name, 'right_panel')
 
     def test_get_objects(self):
         objs = Frame(name='kitchen', length=1200, height=700, depth=600, thickness=20).get_objects()

@@ -25,6 +25,18 @@ class Project(BaseModel):
             objs.extend(part.get_objects())
         return objs
 
+    def get_materials(self):
+        names = []
+        if self.part:
+            materials = []
+            for part in self.part.values():
+                for material in part.get_materials():
+                    material['names'] = names + material['names']
+                    materials.append(material)
+            return materials
+        else:
+            return [dict(names=names, part=self)]
+
 
 def has_parent(data: Dict[str, Dict[str, Any]]) -> bool:
     for section_value in data.values():

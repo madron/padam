@@ -29,15 +29,14 @@ class Part(BaseModel):
         self.parts.append(part)
         return part
 
-    @property
-    def materials(self):
+    def get_materials(self):
         names = []
         if self.name:
             names.append(self.name)
         if self.parts:
             materials = []
             for part in self.parts:
-                for material in part.materials:
+                for material in part.get_materials():
                     material['names'] = names + material['names']
                     materials.append(material)
             return materials

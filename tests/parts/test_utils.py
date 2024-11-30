@@ -1,12 +1,13 @@
 import unittest
 from padam.parts.frame import Frame
+from padam import Project
 from padam import utils
 
 
 class PanelListTest(unittest.TestCase):
     def test_material(self):
-        frame = Frame(name='kitchen', length=1200, height=700, depth=600, thickness=20, material='plywood')
-        panels = utils.get_panel_list(frame)
+        project = Project(part=dict(kitchen=dict(type='frame', length=1200, height=700, depth=600, thickness=20, material='plywood')))
+        panels = utils.get_panel_list(project)
         self.assertEqual(len(panels), 4)
         panel = panels[0]
         self.assertEqual(panel['label'], 'kitchen_top_panel')

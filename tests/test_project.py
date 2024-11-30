@@ -81,6 +81,17 @@ class ProjectTest(unittest.TestCase):
         objs = project.get_objects()
         self.assertEqual(len(objs), 2)
 
+    def test_materials(self):
+        shelf1_dict = dict(type='panel', length=800, width=250, thickness=18)
+        shelf2_dict = dict(type='panel', length=1200, width=250, thickness=18)
+        part = dict(shelf1=shelf1_dict, shelf2=shelf2_dict)
+        project = Project(part=part)
+        materials = project.get_materials()
+        material = materials[0]
+        self.assertEqual(material,  dict(names=['shelf1'], part=Panel(name='shelf1', **shelf1_dict)))
+        material = materials[1]
+        self.assertEqual(material,  dict(names=['shelf2'], part=Panel(name='shelf2', **shelf2_dict)))
+
 
 class GetDefaultTest(unittest.TestCase):
     def test_inherits_3_levels(self):
