@@ -1,7 +1,6 @@
 import csv
 import io
-from padam.parts import Part
-from padam.parts.panel import Panel
+from padam.parts import Panel, Part
 
 
 def get_panel_list(part: Part):

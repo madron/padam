@@ -3,7 +3,6 @@ from typing import Any, Dict, Type
 from pydantic import BaseModel
 from pydantic import BaseModel, field_validator
 from padam import parts
-from padam.parts import Part
 
 
 class Project(BaseModel):
