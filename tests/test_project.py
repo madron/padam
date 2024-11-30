@@ -81,7 +81,7 @@ class ProjectTest(unittest.TestCase):
         objs = project.get_objects()
         self.assertEqual(len(objs), 2)
 
-    def test_materials(self):
+    def test_get_materials(self):
         shelf1_dict = dict(type='panel', length=800, width=250, thickness=18)
         shelf2_dict = dict(type='panel', length=1200, width=250, thickness=18)
         part = dict(shelf1=shelf1_dict, shelf2=shelf2_dict)
@@ -91,6 +91,12 @@ class ProjectTest(unittest.TestCase):
         self.assertEqual(material,  dict(names=['shelf1'], part=Panel(name='shelf1', **shelf1_dict)))
         material = materials[1]
         self.assertEqual(material,  dict(names=['shelf2'], part=Panel(name='shelf2', **shelf2_dict)))
+        self.assertEqual(len(materials), 2)
+
+    def test_get_materials_no_part(self):
+        project = Project()
+        materials = project.get_materials()
+        self.assertEqual(len(materials), 0)
 
 
 class GetDefaultTest(unittest.TestCase):

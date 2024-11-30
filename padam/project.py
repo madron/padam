@@ -27,15 +27,12 @@ class Project(BaseModel):
 
     def get_materials(self):
         names = []
-        if self.part:
-            materials = []
-            for part in self.part.values():
-                for material in part.get_materials():
-                    material['names'] = names + material['names']
-                    materials.append(material)
-            return materials
-        else:
-            return [dict(names=names, part=self)]
+        materials = []
+        for part in self.part.values():
+            for material in part.get_materials():
+                material['names'] = names + material['names']
+                materials.append(material)
+        return materials
 
 
 def has_parent(data: Dict[str, Dict[str, Any]]) -> bool:
