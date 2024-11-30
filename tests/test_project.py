@@ -72,6 +72,15 @@ class ProjectTest(unittest.TestCase):
         self.assertEqual(cabinet.depth, 600)
         self.assertEqual(len(project.part), 1)
 
+    def test_get_objects(self):
+        part = dict(
+            shelf1=dict(type='panel', length=800, width=250, thickness=18),
+            shelf2=dict(type='panel', length=1200, width=250, thickness=18),
+        )
+        project = Project(part=part)
+        objs = project.get_objects()
+        self.assertEqual(len(objs), 2)
+
 
 class GetDefaultTest(unittest.TestCase):
     def test_inherits_3_levels(self):

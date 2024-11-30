@@ -19,6 +19,12 @@ class Project(BaseModel):
     def get_part(cls, data: Dict[str, Any], values: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
         return get_part(data, values.data['default'])
 
+    def get_objects(self):
+        objs = list()
+        for part in self.part.values():
+            objs.extend(part.get_objects())
+        return objs
+
 
 def has_parent(data: Dict[str, Dict[str, Any]]) -> bool:
     for section_value in data.values():
