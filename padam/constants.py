@@ -1,3 +1,6 @@
+CUTLIST_FORMATS = ['cutlistoptimizer']
+CUTLIST_DEFAULT_FORMAT = 'cutlistoptimizer'
+
 MATERIAL_COLOR = dict(
     plywood='#f8f2dc',
     hardwood='#cba791',
