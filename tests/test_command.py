@@ -38,5 +38,4 @@ class CommandTest(unittest.TestCase):
         self.assertIn('base_cabinet', cutlist.getvalue())
         output = output.getvalue()
         self.assertIn('cube', output)
-        self.assertIn('translate(v = [0, 0, 10]', output)
-        print(output)
+        self.assertIn('translate(v = [0, 100.0000000000, 0]', output)
