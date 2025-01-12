@@ -91,6 +91,12 @@ class BasePanelTest(unittest.TestCase):
         scad = scad_render(obj)
         self.assertEqual(scad,'\n\ncube(size = [1000.0000000000, 200.0000000000, 18.0000000000]);')
 
+    def test_rotate_object(self):
+        obj = BasePanel(1000, 300, 18, x=100, rotate_y=90).get_object()
+        scad = scad_render(obj)
+        print(scad)
+        self.assertEqual(scad,'\n\ntranslate(v = [100.0000000000, 0, 0]) {\n	rotate(a = [0, 90.0000000000, 0]) {\n		cube(size = [1000.0000000000, 300.0000000000, 18.0000000000]);\n	}\n}')
+
     def test_translate_object(self):
         obj = BasePanel(1000, 300, 18, x=100, y=-300).get_object()
         scad = scad_render(obj)
