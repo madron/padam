@@ -1,23 +1,63 @@
 parameter:
-  roller_height: 124 + 2.5
+  roller_height: 124 + 2.5  # roller height + washer thickness
   total_height: 900
-  internal_compartment_length: 420
+  internal_compartment_length: 420  # compatible with Festool SYS AZ drawers
   drawer_slider_length: 450
+  drawer_space: 320
   side_thickness: 20
   top_thickness: 28
   cabinet_length: 2 * internal_compartment_length + 3 * side_thickness
   cabinet_height: total_height - roller_height - top_thickness
+  internal_divider_length: total_height - roller_height - top_thickness
   cabinet_depth: 450
+  roller_length: 100
+  roller_rear_offset: -roller_length
+  roller_front_offset: -cabinet_depth
+  roller_right_offset: cabinet_length - roller_length
+
+default:
+  cabinet:
+    material: plywood
+  roller:
+    length: roller_length
+    width: roller_length
+    thickness: roller_height
 
 part:
   cart:
     type: frame
+    default: cabinet
     material: plywood
     thickness: 20
     top_thickness: 28
     bottom_thickness: 28
-    height: 700   # cabinet_height
+    height: cabinet_height
     length: cabinet_length
-    width: 250
-    y: -250
+    depth: cabinet_depth
+    z: roller_height
+  internal_divider:
+    type: panel
+    default: cabinet
+    length: internal_divider_length
+    width: drawer_space
+    thickness: side_thickness
+    y: -cabinet_depth
     z: 1000
+  roller_front_left:
+    type: panel
+    default: roller
+    y: roller_front_offset
+  roller_front_right:
+    type: panel
+    default: roller
+    y: roller_front_offset
+    x: roller_right_offset
+  roller_back_left:
+    type: panel
+    default: roller
+    y: roller_rear_offset
+  roller_back_right:
+    type: panel
+    default: roller
+    y: roller_rear_offset
+    x: roller_right_offset
