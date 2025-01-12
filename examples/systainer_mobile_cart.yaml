@@ -1,0 +1,23 @@
+parameter:
+  roller_height: 124 + 2.5
+  total_height: 900
+  internal_compartment_length: 420
+  drawer_slider_length: 450
+  side_thickness: 20
+  top_thickness: 28
+  cabinet_length: 2 * internal_compartment_length + 3 * side_thickness
+  cabinet_height: total_height - roller_height - top_thickness
+  cabinet_depth: 450
+
+part:
+  cart:
+    type: frame
+    material: plywood
+    thickness: 20
+    top_thickness: 28
+    bottom_thickness: 28
+    height: 700   # cabinet_height
+    length: cabinet_length
+    width: 250
+    y: -250
+    z: 1000
