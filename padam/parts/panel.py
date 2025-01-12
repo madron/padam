@@ -43,7 +43,7 @@ class BasePanel(Part):
         material_color = constants.MATERIAL_COLOR.get(self.material, None)
         if material_color:
             obj = color(material_color)(obj)
-        return self.translate_object(obj)
+        return self.translate_object(self.rotate_object(obj))
 
     def get_params(self) -> OrderedDict[str, Any]:
         params = super().get_params()
@@ -192,7 +192,7 @@ class Panel(BasePanel):
             else:
                 objects.append(right_edge)
         objects.append(main_panel)
-        objects = [self.translate_object(x) for x in objects]
+        objects = [self.translate_object(self.rotate_object(x)) for x in objects]
         return objects
 
     def get_params(self) -> OrderedDict[str, Any]:

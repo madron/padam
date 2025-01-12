@@ -4,12 +4,15 @@ parameter:
   internal_compartment_length: 420  # compatible with Festool SYS AZ drawers
   drawer_slider_length: 450
   drawer_space: 320
-  side_thickness: 20
+  cabinet_thickness: 20
+  cabinet_bottom_thickness: 28
+  cabinet_depth: 450
   top_thickness: 28
-  cabinet_length: 2 * internal_compartment_length + 3 * side_thickness
+  top_overhang: 25
+  top_depth: cabinet_depth + top_overhang
+  cabinet_length: 2 * internal_compartment_length + 3 * cabinet_thickness
   cabinet_height: total_height - roller_height - top_thickness
   internal_divider_length: total_height - roller_height - top_thickness
-  cabinet_depth: 450
   roller_length: 100
   roller_rear_offset: -roller_length
   roller_front_offset: -cabinet_depth
@@ -17,6 +20,7 @@ parameter:
 
 default:
   cabinet:
+    thickness: cabinet_thickness
     material: plywood
   roller:
     length: roller_length
@@ -28,9 +32,8 @@ part:
     type: frame
     default: cabinet
     material: plywood
-    thickness: 20
-    top_thickness: 28
-    bottom_thickness: 28
+    thickness: cabinet_thickness
+    bottom_thickness: cabinet_bottom_thickness
     height: cabinet_height
     length: cabinet_length
     depth: cabinet_depth
@@ -40,9 +43,19 @@ part:
     default: cabinet
     length: internal_divider_length
     width: drawer_space
-    thickness: side_thickness
+    thickness: cabinet_thickness
+    rotate_y: 90
+    x: internal_compartment_length + cabinet_thickness
     y: -cabinet_depth
-    z: 1000
+    z: total_height - top_thickness
+  top:
+    type: panel
+    default: cabinet
+    length: cabinet_length
+    width: top_depth
+    thickness: top_thickness
+    z: total_height - top_thickness
+    y: -cabinet_depth
   roller_front_left:
     type: panel
     default: roller

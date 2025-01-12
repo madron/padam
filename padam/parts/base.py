@@ -2,7 +2,7 @@ import collections
 from typing import Any, Dict, List, OrderedDict, Self
 from pydantic import BaseModel, model_validator
 from solid.solidpython import OpenSCADObject
-from solid.utils import translate
+from solid.utils import rotate, translate
 
 
 class Part(BaseModel):
@@ -12,6 +12,9 @@ class Part(BaseModel):
     x: float | None = None
     y: float | None = None
     z: float | None = None
+    rotate_x: float | None = None
+    rotate_y: float | None = None
+    rotate_z: float | None = None
 
     @model_validator(mode='before')
     def default_values(cls, values: Any) -> Any:
@@ -31,6 +34,9 @@ class Part(BaseModel):
         self.x = self.x or 0
         self.y = self.y or 0
         self.z = self.z or 0
+        self.rotate_x = self.rotate_x or 0
+        self.rotate_y = self.rotate_y or 0
+        self.rotate_z = self.rotate_z or 0
 
     def __str__(self):
         return self.name or ''
@@ -52,6 +58,11 @@ class Part(BaseModel):
             return materials
         else:
             return [dict(names=names, part=self)]
+
+    def rotate_object(self, obj: OpenSCADObject) -> OpenSCADObject:
+        if self.rotate_x or self.rotate_y or self.rotate_z:
+            obj = rotate([self.rotate_x, self.rotate_y, self.rotate_z])(obj)
+        return obj
 
     def translate_object(self, obj: OpenSCADObject) -> OpenSCADObject:
         if self.x or self.y or self.z:
