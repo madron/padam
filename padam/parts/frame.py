@@ -6,9 +6,9 @@ from solid.utils import back, right, up
 
 
 class Frame(Part):
-    length: int | None = None
-    height: int | None = None
-    depth: int | None = None
+    length: float | None = None
+    height: float | None = None
+    depth: float | None = None
     thickness: float | None = None
     material: str | None = None
     top_thickness: float | None = None
@@ -18,8 +18,8 @@ class Frame(Part):
     bottom_material: str | None = None
     side_material: str | None = None
     top_slitted: bool | None = True
-    top_front_depth: int | None = 100
-    top_back_depth: int | None = 100
+    top_front_depth: float | None = 100
+    top_back_depth: float | None = 100
     # calculated attributes
     interior_length: float | None = None
     interior_height: float | None = None

@@ -158,6 +158,17 @@ class PanelTest(unittest.TestCase):
         self.assertEqual(part.material, 'plywood')
         self.assertEqual(part.name, 'bottom')
 
+    def test_float(self):
+        panel = Panel(
+            length=1000.5,
+            width=300.5,
+            thickness=18.5,
+        )
+        part = panel.parts[0]
+        self.assertEqual(part.length, 1000.5)
+        self.assertEqual(part.width, 300.5)
+        self.assertEqual(part.thickness, 18.5)
+
     def test_parts_length(self):
         panel = Panel(
             length=1000,

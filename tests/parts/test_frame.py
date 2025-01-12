@@ -15,6 +15,22 @@ class FrameTest(unittest.TestCase):
         self.assertEqual(frame.parts[2].name, 'left_panel')
         self.assertEqual(frame.parts[3].name, 'right_panel')
 
+    def test_float(self):
+        frame = Frame(1000.5, 800.5, 400.5)
+        self.assertEqual(len(frame.parts), 4)
+        self.assertEqual(frame.parts[0].name, 'top_panel')
+        self.assertEqual(frame.parts[0].length, 964.5)
+        self.assertEqual(frame.parts[0].width, 400.5)
+        self.assertEqual(frame.parts[1].name, 'bottom_panel')
+        self.assertEqual(frame.parts[1].length, 964.5)
+        self.assertEqual(frame.parts[1].width, 400.5)
+        self.assertEqual(frame.parts[2].name, 'left_panel')
+        self.assertEqual(frame.parts[2].length, 800.5)
+        self.assertEqual(frame.parts[3].width, 400.5)
+        self.assertEqual(frame.parts[3].name, 'right_panel')
+        self.assertEqual(frame.parts[3].length, 800.5)
+        self.assertEqual(frame.parts[3].width, 400.5)
+
     def test_materials(self):
         frame = Frame(1000, 30, 18)
         self.assertEqual(len(frame.get_materials()), 4)
