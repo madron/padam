@@ -1,6 +1,7 @@
 import unittest
+from collections import OrderedDict
 from padam.parts import Cabinet, Panel, BasePanel
-from padam.project import get_default, get_part
+from padam.project import get_parameter, get_default, get_part
 from padam.project import Project
 
 
@@ -111,6 +112,63 @@ class ProjectTest(unittest.TestCase):
         materials = project.get_materials()
         self.assertEqual(len(materials), 0)
 
+
+class GetParameterTest(unittest.TestCase):
+    def test_empty(self):
+        data = OrderedDict()
+        parameter = get_parameter(data)
+        self.assertEqual(parameter, dict())
+
+    def test_int(self):
+        data = OrderedDict(length=800)
+        parameter = get_parameter(data)
+        self.assertEqual(parameter, dict(length=800))
+
+    def test_text_int(self):
+        data = OrderedDict(length='800')
+        parameter = get_parameter(data)
+        self.assertEqual(parameter, dict(length=800))
+
+    def test_float(self):
+        data = OrderedDict(length='float(800)')
+        parameter = get_parameter(data)
+        self.assertEqual(parameter, dict(length=800.0))
+
+    def test_simple_calculation(self):
+        data = OrderedDict(length='10 + 15')
+        parameter = get_parameter(data)
+        self.assertEqual(parameter, dict(length=25))
+
+    def test_calculation_1(self):
+        data = OrderedDict(
+            part1=10,
+            part2=15,
+            total='part1 + part2',
+        )
+        parameter = get_parameter(data)
+        self.assertEqual(parameter['part1'], 10)
+        self.assertEqual(parameter['part2'], 15)
+        self.assertEqual(parameter['total'], 25)
+
+    def test_calculation_2(self):
+        data = OrderedDict(
+            part1=10,
+            part2=15,
+            total='(part1 + part2 * 2) / 2',
+        )
+        parameter = get_parameter(data)
+        self.assertEqual(parameter['total'], 20)
+
+    def test_missing_parameter(self):
+        data = OrderedDict(
+            part1=10,
+            part3=15,
+            total='part1 + part2',
+        )
+        with self.assertRaises(ValueError) as cm:
+            get_parameter(data)
+        errors = cm.exception.args
+        self.assertEqual(errors, ("error in 'total': name 'part2' is not defined",))
 
 class GetDefaultTest(unittest.TestCase):
     def test_inherits_3_levels(self):

@@ -6,8 +6,14 @@ from padam import parts
 
 
 class Project(BaseModel):
+    parameter: Dict[str, str] | None = dict()
     default: Dict[str, Dict[str, Any]] | None = dict()
     part: Dict[str, Any] | None = dict()
+
+    @field_validator('parameter')
+    @classmethod
+    def get_parameter(cls, data: Dict[str, Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
+        return get_parameter(data)
 
     @field_validator('default')
     @classmethod
@@ -41,6 +47,20 @@ def has_parent(data: Dict[str, Dict[str, Any]]) -> bool:
             return True
     return False
 
+
+def get_parameter(data: Dict[str, Dict[str, str]]) -> Dict[str, Dict[str, Any]]:
+    parameter = dict()
+    for k, v in data.items():
+        value = v
+        if isinstance(value, str):
+            for pk, pv in parameter.items():
+                value = value.replace(pk, str(pv))
+            try:
+                value = eval(value)
+            except NameError as e:
+                raise ValueError("error in '{}': {}".format(k, str(e)))
+        parameter[k] = value
+    return parameter
 
 def get_default(data: Dict[str, Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
     default = dict()

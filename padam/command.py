@@ -29,5 +29,5 @@ def run(project, output=None, quiet=False, cutlist=False, cutlist_format=CUTLIST
         output.close()
 
     if cutlist:
-        cutlist.write(get_cutlist(project))
+        cutlist.write(get_cutlist(project, format=cutlist_format))
         cutlist.close()
