@@ -1,5 +1,5 @@
 import unittest
-from padam.parts import Cabinet, Panel
+from padam.parts import Cabinet, Panel, BasePanel
 from padam.project import get_default, get_part
 from padam.project import Project
 
@@ -101,9 +101,9 @@ class ProjectTest(unittest.TestCase):
         project = Project(part=part)
         materials = project.get_materials()
         material = materials[0]
-        self.assertEqual(material,  dict(names=['shelf1'], part=Panel(name='shelf1', **shelf1_dict)))
+        self.assertEqual(material, dict(names=['shelf1'], part=BasePanel(name='shelf1', **shelf1_dict)))
         material = materials[1]
-        self.assertEqual(material,  dict(names=['shelf2'], part=Panel(name='shelf2', **shelf2_dict)))
+        self.assertEqual(material, dict(names=['shelf2'], part=BasePanel(name='shelf2', **shelf2_dict)))
         self.assertEqual(len(materials), 2)
 
     def test_get_materials_no_part(self):

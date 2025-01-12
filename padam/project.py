@@ -76,7 +76,8 @@ def get_part_class(name: str) -> Type[parts.Part]:
     class_dict = dict(
         cabinet=parts.Cabinet,
         frame=parts.Frame,
-        edgebandedpanel=parts.EdgeBandedPanel,
+        edgebandedpanel=parts.Panel,
+        basepanel=parts.BasePanel,
         panel=parts.Panel,
     )
     return class_dict[name]

@@ -1,12 +1,12 @@
 import unittest
 from pydantic import ValidationError
 from solid import color, cube, scad_render
-from padam.parts.panel import EdgeBandedPanel, Panel
+from padam.parts.panel import Panel, BasePanel
 
 
-class PanelTest(unittest.TestCase):
+class BasePanelTest(unittest.TestCase):
     def test_str(self):
-        panel = Panel(1000, 30, 18, name='bottom')
+        panel = BasePanel(1000, 30, 18, name='bottom')
         self.assertEqual(str(panel), 'bottom')
 
     def test_default(self):
@@ -15,7 +15,7 @@ class PanelTest(unittest.TestCase):
             width=400,
             thickness=18,
         )
-        panel = Panel(1000, default=default)
+        panel = BasePanel(1000, default=default)
         self.assertEqual(panel.length, 1000)
         self.assertEqual(panel.width, 400)
         self.assertEqual(panel.thickness, 18)
@@ -26,7 +26,7 @@ class PanelTest(unittest.TestCase):
 
     def test_default_not_inexisting_field(self):
         default = dict(wrong_field='no problem')
-        panel = Panel(1000, 30, 18, default=default)
+        panel = BasePanel(1000, 30, 18, default=default)
         self.assertEqual(panel.length, 1000)
         self.assertEqual(panel.width, 30)
         self.assertEqual(panel.thickness, 18)
@@ -35,7 +35,7 @@ class PanelTest(unittest.TestCase):
     def test_default_wrong_material(self):
         default = dict(material=20)
         with self.assertRaises(ValidationError) as cm:
-            Panel(1000, 30, 18, default=default)
+            BasePanel(1000, 30, 18, default=default)
         errors = cm.exception.errors()
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors[0]['loc'], ('material',))
@@ -44,7 +44,7 @@ class PanelTest(unittest.TestCase):
     def test_default_wrong_length(self):
         default = dict(length='200 mm')
         with self.assertRaises(ValidationError) as cm:
-            Panel(width=400, thickness=18, default=default)
+            BasePanel(width=400, thickness=18, default=default)
         errors = cm.exception.errors()
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors[0]['loc'], ('length',))
@@ -53,14 +53,14 @@ class PanelTest(unittest.TestCase):
     def test_default_missing_thickness(self):
         default = dict(material='plywood')
         with self.assertRaises(ValidationError) as cm:
-            Panel(1000, 30, default=default)
+            BasePanel(1000, 30, default=default)
         errors = cm.exception.errors()
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors[0]['loc'], ('thickness',))
         self.assertEqual(errors[0]['msg'], 'Input should be a valid number')
 
     def test_cut_oversize(self):
-        panel = Panel(1000, 30, 18)
+        panel = BasePanel(1000, 30, 18)
         self.assertEqual(panel.cut_length_oversize, 0)
         self.assertEqual(panel.cut_width_oversize, 0)
         self.assertEqual(panel.cut_thickness_oversize, 0)
@@ -71,41 +71,41 @@ class PanelTest(unittest.TestCase):
             cut_width_oversize=4,
             cut_thickness_oversize=3,
         )
-        panel = Panel(1000, 30, 18, default=default)
+        panel = BasePanel(1000, 30, 18, default=default)
         self.assertEqual(panel.cut_length_oversize, 5)
         self.assertEqual(panel.cut_width_oversize, 4)
         self.assertEqual(panel.cut_thickness_oversize, 3)
 
     def test_parts(self):
-        panel = Panel(1000, 30, 18)
+        panel = BasePanel(1000, 30, 18)
         self.assertEqual(panel.parts, [])
 
     def test_materials(self):
-        panel = Panel(1000, 30, 18)
+        panel = BasePanel(1000, 30, 18)
         self.assertEqual(panel.get_materials(),  [dict(names=[], part=panel)])
 
     def test_get_object(self):
-        obj = Panel(1000, 200, 18, name='panel').get_object()
+        obj = BasePanel(1000, 200, 18, name='panel').get_object()
         self.assertIsInstance(obj, cube)
         self.assertEqual(obj.params['size'], [1000, 200, 18])
         scad = scad_render(obj)
         self.assertEqual(scad,'\n\ncube(size = [1000.0000000000, 200.0000000000, 18.0000000000]);')
 
     def test_translate_object(self):
-        obj = Panel(1000, 300, 18, x=100, y=-300).get_object()
+        obj = BasePanel(1000, 300, 18, x=100, y=-300).get_object()
         scad = scad_render(obj)
         self.assertEqual(scad,'\n\ntranslate(v = [100.0000000000, -300.0000000000, 0]) {\n\tcube(size = [1000.0000000000, 300.0000000000, 18.0000000000]);\n}')
 
     def test_get_object_color(self):
-        obj = Panel(1000, 200, 18, name='panel', material='plywood').get_object()
+        obj = BasePanel(1000, 200, 18, name='panel', material='plywood').get_object()
         self.assertIsInstance(obj, color)
 
     def test_get_objects(self):
-        objs = Panel(1000, 200, 18, name='panel').get_objects()
+        objs = BasePanel(1000, 200, 18, name='panel').get_objects()
         self.assertEqual(len(objs), 1)
 
     def test_get_params(self):
-        panel = Panel(1000, 150, 25, name='bottom', material='plywood')
+        panel = BasePanel(1000, 150, 25, name='bottom', material='plywood')
         params = panel.get_params()
         self.assertEqual(len(params), 5)
         self.assertEqual(params['name'], 'bottom')
@@ -115,16 +115,16 @@ class PanelTest(unittest.TestCase):
         self.assertEqual(params['thickness'], 25)
 
     def test_get_panel_cut(self):
-        panel = Panel(1000, 30, 18, material='plywood').get_panel_cut()
+        panel = BasePanel(1000, 30, 18, material='plywood').get_panel_cut()
         self.assertEqual(panel['material'], 'plywood')
         self.assertEqual(panel['length'], 1000)
         self.assertEqual(panel['width'], 30)
         self.assertEqual(panel['thickness'], 18)
 
 
-class EdgeBandedPanelTest(unittest.TestCase):
+class PanelTest(unittest.TestCase):
     def test_str(self):
-        panel = EdgeBandedPanel(
+        panel = Panel(
             length=1000,
             width=30,
             thickness=18,
@@ -138,13 +138,37 @@ class EdgeBandedPanelTest(unittest.TestCase):
         )
         self.assertEqual(str(panel), 'bottom')
 
+    def test_base(self):
+        panel = Panel(
+            length=1000,
+            width=300,
+            thickness=18,
+            name='bottom',
+            material='plywood',
+            edge_banding_material='hardwood',
+            edge_banding_style='length',
+        )
+        self.assertEqual(str(panel), 'bottom')
+        self.assertEqual(len(panel.parts), 1)
+        # Main panel
+        part = panel.parts[0]
+        self.assertEqual(part.length, 1000)
+        self.assertEqual(part.width, 300)
+        self.assertEqual(part.thickness, 18)
+        self.assertEqual(part.material, 'plywood')
+        self.assertEqual(part.name, 'bottom')
+
     def test_parts_length(self):
-        panel = EdgeBandedPanel(
+        panel = Panel(
             length=1000,
             width=200,
             thickness=18,
             name='bottom',
             material='plywood',
+            front_edge_banding=True,
+            back_edge_banding=True,
+            left_edge_banding=True,
+            right_edge_banding=True,
             front_edge_banding_thickness=10,
             back_edge_banding_thickness=10,
             left_edge_banding_thickness=10,
@@ -187,10 +211,10 @@ class EdgeBandedPanelTest(unittest.TestCase):
         self.assertEqual(part.width, 180)
         self.assertEqual(part.thickness, 18)
         self.assertEqual(part.material, 'plywood')
-        self.assertEqual(part.name, None)
+        self.assertEqual(part.name, 'main')
 
     def test_parts_width(self):
-        panel = EdgeBandedPanel(
+        panel = Panel(
             length=1000,
             width=200,
             thickness=18,
@@ -238,10 +262,10 @@ class EdgeBandedPanelTest(unittest.TestCase):
         self.assertEqual(part.width, 180)
         self.assertEqual(part.thickness, 18)
         self.assertEqual(part.material, 'plywood')
-        self.assertEqual(part.name, None)
+        self.assertEqual(part.name, 'main')
 
     def test_parts_overlap(self):
-        panel = EdgeBandedPanel(
+        panel = Panel(
             length=1000,
             width=200,
             thickness=18,
@@ -289,10 +313,10 @@ class EdgeBandedPanelTest(unittest.TestCase):
         self.assertEqual(part.width, 180)
         self.assertEqual(part.thickness, 18)
         self.assertEqual(part.material, 'plywood')
-        self.assertEqual(part.name, None)
+        self.assertEqual(part.name, 'main')
 
     def test_materials(self):
-        panel = EdgeBandedPanel(
+        panel = Panel(
             length=1000,
             width=30,
             thickness=18,
@@ -304,30 +328,41 @@ class EdgeBandedPanelTest(unittest.TestCase):
             edge_banding_material='hardwood',
             edge_banding_style='length',
         )
-        # self.assertEqual(panel.materials,  [dict(names=[], part=panel)])
-        # Front
+        # front
         material = panel.get_materials()[0]
         self.assertEqual(material['names'], ['bottom', 'front_edge'])
-        self.assertIsInstance(material['part'], Panel)
+        self.assertIsInstance(material['part'], BasePanel)
         # back
         material = panel.get_materials()[1]
         self.assertEqual(material['names'], ['bottom', 'back_edge'])
-        self.assertIsInstance(material['part'], Panel)
+        self.assertIsInstance(material['part'], BasePanel)
         # left
         material = panel.get_materials()[2]
         self.assertEqual(material['names'], ['bottom', 'left_edge'])
-        self.assertIsInstance(material['part'], Panel)
+        self.assertIsInstance(material['part'], BasePanel)
         # right
         material = panel.get_materials()[3]
         self.assertEqual(material['names'], ['bottom', 'right_edge'])
-        self.assertIsInstance(material['part'], Panel)
-        # Main panel
+        self.assertIsInstance(material['part'], BasePanel)
+        # main
         material = panel.get_materials()[4]
+        self.assertEqual(material['names'], ['bottom', 'main'])
+        self.assertIsInstance(material['part'], BasePanel)
+
+    def test_materials_simple(self):
+        panel = Panel(
+            length=1000,
+            width=30,
+            thickness=18,
+            name='bottom',
+        )
+        # Main panel
+        material = panel.get_materials()[0]
         self.assertEqual(material['names'], ['bottom'])
-        self.assertIsInstance(material['part'], Panel)
+        self.assertIsInstance(material['part'], BasePanel)
 
     def test_get_objects_length(self):
-        panel = EdgeBandedPanel(
+        panel = Panel(
             length=1000,
             width=30,
             thickness=18,
@@ -343,7 +378,7 @@ class EdgeBandedPanelTest(unittest.TestCase):
         self.assertEqual(len(objs), 5)
 
     def test_get_objects_width(self):
-        panel = EdgeBandedPanel(
+        panel = Panel(
             length=1000,
             width=30,
             thickness=18,
@@ -359,7 +394,7 @@ class EdgeBandedPanelTest(unittest.TestCase):
         self.assertEqual(len(objs), 5)
 
     def test_get_params(self):
-        panel = EdgeBandedPanel(
+        panel = Panel(
             length=1000,
             width=200,
             thickness=18,

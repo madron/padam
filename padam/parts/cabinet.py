@@ -1,5 +1,5 @@
 from typing import Any, List, OrderedDict
-from padam.parts.panel import Panel
+from padam.parts.panel import BasePanel
 from padam.parts.frame import Frame
 from solid import OpenSCADObject, rotate
 from solid.utils import back, right, up
@@ -15,10 +15,10 @@ class Cabinet(Frame):
     # calculated attributes
     interior_depth: float | None = None
     # parts
-    back_panel: Panel | None = None
-    door_panel: Panel | None = None
-    left_door_panel: Panel | None = None
-    right_door_panel: Panel | None = None
+    back_panel: BasePanel | None = None
+    door_panel: BasePanel | None = None
+    left_door_panel: BasePanel | None = None
+    right_door_panel: BasePanel | None = None
 
     def model_post_init(self, __context: Any) -> None:
         super().model_post_init(__context)
@@ -33,12 +33,12 @@ class Cabinet(Frame):
         door_offset = self.reveal * 2
         self.interior_depth: float = self.depth - self.back_thickness
         # parts
-        self.back_panel = self.add_part(Panel(self.interior_length, self.interior_height, self.back_thickness, name='back_panel', material=self.back_material))
+        self.back_panel = self.add_part(BasePanel(self.interior_length, self.interior_height, self.back_thickness, name='back_panel', material=self.back_material))
         if self.door_number == 1:
-            self.door_panel = self.add_part(Panel(self.height - door_offset, self.length - door_offset, self.door_thickness, name='door_panel', material=self.door_material))
+            self.door_panel = self.add_part(BasePanel(self.height - door_offset, self.length - door_offset, self.door_thickness, name='door_panel', material=self.door_material))
         if self.door_number == 2:
-            self.left_door_panel = self.add_part(Panel(self.height - door_offset, self.length / 2 - door_offset, self.door_thickness, name='left_door_panel', material=self.door_material))
-            self.right_door_panel = self.add_part(Panel(self.height - door_offset, self.length / 2 - door_offset, self.door_thickness, name='right_door_panel', material=self.door_material))
+            self.left_door_panel = self.add_part(BasePanel(self.height - door_offset, self.length / 2 - door_offset, self.door_thickness, name='left_door_panel', material=self.door_material))
+            self.right_door_panel = self.add_part(BasePanel(self.height - door_offset, self.length / 2 - door_offset, self.door_thickness, name='right_door_panel', material=self.door_material))
 
     def get_objects(self) -> List[OpenSCADObject]:
         door_offset = self.reveal * 2

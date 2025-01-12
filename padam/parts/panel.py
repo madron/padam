@@ -10,7 +10,7 @@ from padam import constants
 from padam.parts import Part
 
 
-class Panel(Part):
+class BasePanel(Part):
     length: float
     width: float
     thickness: float
@@ -62,11 +62,11 @@ class Panel(Part):
         )
 
 
-class EdgeBandedPanel(Panel):
-    front_edge_banding_thickness: float | None = None,
-    back_edge_banding_thickness: float | None = None,
-    left_edge_banding_thickness: float | None = None,
-    right_edge_banding_thickness: float | None = None,
+class Panel(BasePanel):
+    front_edge_banding_thickness: float | None = None
+    back_edge_banding_thickness: float | None = None
+    left_edge_banding_thickness: float | None = None
+    right_edge_banding_thickness: float | None = None
     edge_banding_material: str | None = 'hardwood',
     edge_banding_style: str | None = 'length',
 
@@ -84,7 +84,7 @@ class EdgeBandedPanel(Panel):
                 length = self.length
             elif self.edge_banding_style == 'width':
                 length = self.length - (self.left_edge_banding_thickness or 0) - (self.right_edge_banding_thickness or 0)
-            self._front_edge = self.add_part(Panel(
+            self._front_edge = self.add_part(BasePanel(
                 name='front_edge',
                 length=length,
                 width=self.front_edge_banding_thickness,
@@ -100,7 +100,7 @@ class EdgeBandedPanel(Panel):
                 length = self.length
             elif self.edge_banding_style == 'width':
                 length = self.length - (self.left_edge_banding_thickness or 0) - (self.right_edge_banding_thickness or 0)
-            self._back_edge = self.add_part(Panel(
+            self._back_edge = self.add_part(BasePanel(
                 name='back_edge',
                 length=length,
                 width=self.back_edge_banding_thickness,
@@ -116,7 +116,7 @@ class EdgeBandedPanel(Panel):
                 length = self.width
             elif self.edge_banding_style == 'length':
                 length = self.width - (self.front_edge_banding_thickness or 0) - (self.back_edge_banding_thickness or 0)
-            self._left_edge = self.add_part(Panel(
+            self._left_edge = self.add_part(BasePanel(
                 name='left_edge',
                 length=length,
                 width=self.left_edge_banding_thickness,
@@ -132,7 +132,7 @@ class EdgeBandedPanel(Panel):
                 length = self.width
             elif self.edge_banding_style == 'length':
                 length = self.width - (self.front_edge_banding_thickness or 0) - (self.back_edge_banding_thickness or 0)
-            self._right_edge = self.add_part(Panel(
+            self._right_edge = self.add_part(BasePanel(
                 name='right_edge',
                 length=length,
                 width=self.right_edge_banding_thickness,
@@ -142,12 +142,20 @@ class EdgeBandedPanel(Panel):
                 cut_width_oversize=self._edge_band_cut_width_oversize,
                 cut_thickness_oversize=self._edge_band_cut_thickness_oversize,
             ))
-        self._main_panel = self.add_part(Panel(
+        name = 'main' if len(self.parts) > 0 else self.name
+        self._main_panel = self.add_part(BasePanel(
+            name=name,
             length=self._main_panel_length,
             width=self._main_panel_width,
             thickness=self.thickness,
             material=self.material,
         ))
+
+    def get_materials(self):
+        materials = super().get_materials()
+        if len(self.parts) == 1:
+            materials[0]['names'].pop(-1)
+        return materials
 
     def get_objects(self) -> List[OpenSCADObject]:
         main_panel = self._main_panel.get_object()

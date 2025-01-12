@@ -1,6 +1,6 @@
 from typing import Any, List, OrderedDict
 from padam.parts import Part
-from padam.parts.panel import Panel
+from padam.parts.panel import BasePanel
 from solid import OpenSCADObject, rotate
 from solid.utils import back, right, up
 
@@ -24,10 +24,10 @@ class Frame(Part):
     interior_length: float | None = None
     interior_height: float | None = None
     # parts
-    top_panel: Panel | None = None
-    bottom_panel: Panel | None = None
-    left_panel: Panel | None = None
-    right_panel: Panel | None = None
+    top_panel: BasePanel | None = None
+    bottom_panel: BasePanel | None = None
+    left_panel: BasePanel | None = None
+    right_panel: BasePanel | None = None
 
     def __init__(
         self,
@@ -60,11 +60,11 @@ class Frame(Part):
         self.interior_length = self.length - 2 * self.side_thickness
         self.interior_height = self.height - self.top_thickness - self.bottom_thickness
         # parts
-        p = Panel(self.interior_length, self.depth, self.top_thickness, name='top_panel', material=self.top_material)
+        p = BasePanel(self.interior_length, self.depth, self.top_thickness, name='top_panel', material=self.top_material)
         self.top_panel = self.add_part(p)
-        self.bottom_panel = self.add_part(Panel(self.interior_length, self.depth, self.bottom_thickness, name='bottom_panel', material=self.bottom_material))
-        self.left_panel = self.add_part(Panel(self.height, self.depth, self.side_thickness, name='left_panel', material=self.side_material))
-        self.right_panel = self.add_part(Panel(self.height, self.depth, self.side_thickness, name='right_panel', material=self.side_material))
+        self.bottom_panel = self.add_part(BasePanel(self.interior_length, self.depth, self.bottom_thickness, name='bottom_panel', material=self.bottom_material))
+        self.left_panel = self.add_part(BasePanel(self.height, self.depth, self.side_thickness, name='left_panel', material=self.side_material))
+        self.right_panel = self.add_part(BasePanel(self.height, self.depth, self.side_thickness, name='right_panel', material=self.side_material))
 
     def get_objects(self) -> List[OpenSCADObject]:
         top_panel = up(self.height - self.top_thickness)(self.top_panel.get_object())
