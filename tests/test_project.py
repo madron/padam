@@ -73,6 +73,20 @@ class ProjectTest(unittest.TestCase):
         self.assertEqual(cabinet.depth, 600)
         self.assertEqual(len(project.part), 1)
 
+    def test_parameter(self):
+        parameter = dict(length1=300, length2=500, total='length1 + length2')
+        part = dict(
+            base=dict(type='cabinet', default='cabinet', length=800, depth=600, thickness=19),
+        )
+        project = Project(parameter=parameter, part=part)
+        self.assertEqual(project.default, dict())
+        cabinet: Cabinet = project.part['base']
+        self.assertEqual(cabinet.name, 'base')
+        self.assertEqual(cabinet.length, 800)
+        self.assertEqual(cabinet.depth, 600)
+        self.assertEqual(cabinet.thickness, 19)
+        self.assertEqual(len(project.part), 1)
+
     def test_no_default(self):
         part = dict(
             base=dict(type='cabinet', default='cabinet', length=800, depth=600, thickness=19),
@@ -169,6 +183,16 @@ class GetParameterTest(unittest.TestCase):
             get_parameter(data)
         errors = cm.exception.args
         self.assertEqual(errors, ("error in 'total': name 'part2' is not defined",))
+
+    def test_substring(self):
+        data = OrderedDict(
+            part=10,
+            total='part1 + 5',
+        )
+        with self.assertRaises(ValueError) as cm:
+            get_parameter(data)
+        errors = cm.exception.args
+        self.assertEqual(errors, ("error in 'total': name 'part1' is not defined",))
 
 class GetDefaultTest(unittest.TestCase):
     def test_inherits_3_levels(self):

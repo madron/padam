@@ -1,3 +1,4 @@
+import re
 from copy import copy
 from typing import Any, Dict, Type
 from pydantic import BaseModel
@@ -6,7 +7,7 @@ from padam import parts
 
 
 class Project(BaseModel):
-    parameter: Dict[str, str] | None = dict()
+    parameter: Dict[str, Any] | None = dict()
     default: Dict[str, Dict[str, Any]] | None = dict()
     part: Dict[str, Any] | None = dict()
 
@@ -54,13 +55,14 @@ def get_parameter(data: Dict[str, Dict[str, str]]) -> Dict[str, Dict[str, Any]]:
         value = v
         if isinstance(value, str):
             for pk, pv in parameter.items():
-                value = value.replace(pk, str(pv))
+                value = re.sub(r"\b{}\b".format(pk), str(pv), value)
             try:
                 value = eval(value)
             except NameError as e:
                 raise ValueError("error in '{}': {}".format(k, str(e)))
         parameter[k] = value
     return parameter
+
 
 def get_default(data: Dict[str, Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
     default = dict()
