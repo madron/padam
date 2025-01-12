@@ -18,13 +18,13 @@ class Project(BaseModel):
 
     @field_validator('default')
     @classmethod
-    def get_default(cls, data: Dict[str, Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
-        return get_default(data)
+    def get_default(cls, data: Dict[str, Dict[str, Any]], values: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
+        return get_default(data, parameter=values.data.get('parameter', dict()))
 
     @field_validator('part')
     @classmethod
     def get_part(cls, data: Dict[str, Any], values: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
-        return get_part(data, values.data.get('default', dict()))
+        return get_part(data, default=values.data.get('default', dict()), parameter=values.data.get('parameter', dict()))
 
     def get_objects(self):
         objs = list()
@@ -64,7 +64,7 @@ def get_parameter(data: Dict[str, Dict[str, str]]) -> Dict[str, Dict[str, Any]]:
     return parameter
 
 
-def get_default(data: Dict[str, Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
+def get_default(data: Dict[str, Dict[str, Any]], parameter: Dict[str, Any] | None = dict()) -> Dict[str, Dict[str, Any]]:
     default = dict()
     for section_name, section_value in data.items():
         if 'inherits' in section_value:
@@ -76,13 +76,21 @@ def get_default(data: Dict[str, Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
             del section_value['inherits']
         else:
             default[section_name] = dict()
-        default[section_name].update(section_value)
+        section_value_copy = dict()
+        for k, v in section_value.items():
+            value = v
+            for pk, pv in parameter.items():
+                value = re.sub(r"\b{}\b".format(pk), str(pv), str(value))
+            if not value == v:
+                value = eval(value)
+            section_value_copy[k] = value
+        default[section_name].update(section_value_copy)
     if has_parent(default):
         default = get_default(default)
     return default
 
 
-def get_part(data: Dict[str, Any], default: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:
+def get_part(data: Dict[str, Any], default: Dict[str, Dict[str, Any]], parameter: Dict[str, Any] | None = dict()) -> Dict[str, Any]:
     result = dict()
     for part_name, part_value in data.items():
         default_value = dict()
@@ -90,6 +98,13 @@ def get_part(data: Dict[str, Any], default: Dict[str, Dict[str, Any]]) -> Dict[s
             default_name = part_value.pop('default')
             default_value = default.get(default_name, dict())
         part_class = get_part_class(part_value['type'])
+        for k, v in part_value.items():
+            value = v
+            for pk, pv in parameter.items():
+                value = re.sub(r"\b{}\b".format(pk), str(pv), str(value))
+            if not value == v:
+                value = eval(value)
+            part_value[k] = value
         result[part_name] = part_class(name=part_name, default=default_value, **part_value)
     return result
 

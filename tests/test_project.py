@@ -35,7 +35,7 @@ class ProjectTest(unittest.TestCase):
         self.assertEqual(project.default['cabinet_top']['depth'], 400)
 
     def test_default_inherits_wrong_parent(self):
-        default=dict(
+        default = dict(
             cabinet=dict(
                 thickness=18,
             ),
@@ -50,6 +50,25 @@ class ProjectTest(unittest.TestCase):
         self.assertEqual(errors[0]['loc'], ('default',))
         self.assertEqual(errors[0]['msg'], 'Value error, section "cabinet_top" inherits from non existent section "wrong"')
         self.assertEqual(len(errors), 1)
+
+    def test_default_parameter(self):
+        parameter = dict(
+            internal_depth=400,
+            external_depth='internal_depth + 50',
+        )
+        default = dict(
+            cabinet=dict(
+                thickness=18,
+            ),
+            cabinet_top=dict(
+                inherits='cabinet',
+                depth='external_depth',
+            ),
+        )
+        project = Project(parameter=parameter, default=default)
+        self.assertEqual(project.default['cabinet']['thickness'], 18)
+        self.assertEqual(project.default['cabinet_top']['thickness'], 18)
+        self.assertEqual(project.default['cabinet_top']['depth'], 450)
 
     def test_part_base(self):
         default=dict(
@@ -74,11 +93,15 @@ class ProjectTest(unittest.TestCase):
         self.assertEqual(len(project.part), 1)
 
     def test_parameter(self):
-        parameter = dict(length1=300, length2=500, total='length1 + length2')
-        part = dict(
-            base=dict(type='cabinet', default='cabinet', length=800, depth=600, thickness=19),
+        parameter = dict(
+            length1=300,
+            length2=500,
+            total_length='length1 + length2',
         )
-        project = Project(parameter=parameter, part=part)
+        part = dict(
+            base=dict(type='cabinet', default='cabinet', length='total_length', depth=600, thickness=19),
+        )
+        project = Project(part=part, parameter=parameter)
         self.assertEqual(project.default, dict())
         cabinet: Cabinet = project.part['base']
         self.assertEqual(cabinet.name, 'base')
